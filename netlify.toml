@@ -1,0 +1,39 @@
+# Configuração do deploy no Netlify.
+# Site estático: não há build, o index.html já está na raiz do repositório.
+
+[build]
+  publish = "."
+  command = ""
+
+# --- Cabeçalhos de segurança, para todas as páginas ---
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), camera=(), microphone=(), payment=()"
+
+# --- Cache ---
+# CSS e JS NÃO têm hash no nome (style.css, main.js). Um cache longo com
+# "immutable" faria quem já visitou continuar vendo a versão antiga depois de
+# cada atualização, às vezes por meses. Por isso aqui vale revalidação: o
+# navegador pergunta ao servidor e, se nada mudou, recebe um 304 vazio — quase
+# tão rápido quanto o cache, sem o risco de servir conteúdo velho.
+# Se um dia o projeto ganhar build com hash no nome dos arquivos, aí sim troque
+# por "public, max-age=31536000, immutable".
+[[headers]]
+  for = "/assets/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/assets/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# Imagens locais, quando houver: uma semana de cache com revalidação depois.
+[[headers]]
+  for = "/assets/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"

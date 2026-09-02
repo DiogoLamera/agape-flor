@@ -1,0 +1,712 @@
+/* =========================================================
+   Ágape Floricultura — landing page
+   Ordem: tokens, base, utilitários, botões, cabeçalho, hero,
+   serviços, catálogo, entrega, contato, rodapé, animações,
+   responsivo, movimento reduzido.
+   ========================================================= */
+
+/* === TOKENS === */
+:root{
+  --areia:#FAF6EE;
+  --creme:#FFFDF8;
+  --cafe:#3A2A1E;
+  --cafe-claro:#5A4536;
+  --girassol:#E8A417;
+  --girassol-claro:#F7C95B;
+  --terracota:#B5533C;
+  --sage:#7E8F6E;
+  --tinta:#2E241C;
+  --tinta-suave:#6B5B4E;
+  --borda:rgba(58,42,30,.14);
+
+  --serif:"Fraunces",Georgia,"Times New Roman",serif;
+  --sans:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+
+  --largura:1200px;
+  --folga:clamp(1.25rem,5vw,3.5rem);
+  --secao-y:clamp(4.5rem,9vw,8rem);
+  --curva:clamp(28px,4vw,56px);
+
+  --suave:cubic-bezier(.22,.61,.36,1);
+
+  --sombra-p:0 2px 12px rgba(58,42,30,.07);
+  --sombra-m:0 14px 38px rgba(58,42,30,.13);
+  --sombra-g:0 28px 64px rgba(58,42,30,.22);
+}
+
+/* === BASE === */
+*,*::before,*::after{box-sizing:border-box}
+
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+
+body{
+  margin:0;
+  background:var(--areia);
+  color:var(--tinta);
+  font-family:var(--sans);
+  font-size:clamp(.95rem,.3vw + .88rem,1.02rem);
+  font-weight:300;
+  line-height:1.68;
+  overflow-x:hidden;
+  overflow-x:clip;
+  -webkit-font-smoothing:antialiased;
+}
+
+img,svg,iframe{display:block;max-width:100%}
+img{height:auto}
+
+h1,h2,h3{
+  font-family:var(--serif);
+  font-weight:500;
+  line-height:1.16;
+  margin:0;
+}
+
+p{margin:0 0 1rem}
+ul,ol{margin:0;padding:0;list-style:none}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+address{font-style:normal}
+
+:focus-visible{
+  outline:2px solid var(--girassol);
+  outline-offset:3px;
+  border-radius:3px;
+}
+
+::selection{background:var(--girassol);color:var(--cafe)}
+
+/* === UTILITÁRIOS === */
+.sr{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+
+.pular{
+  position:absolute;left:50%;top:-100px;z-index:200;
+  transform:translateX(-50%);
+  padding:.7rem 1.4rem;
+  background:var(--cafe);color:var(--creme);
+  border-radius:0 0 8px 8px;
+  transition:top .25s var(--suave);
+}
+.pular:focus{top:0}
+
+.titulo-secao{
+  width:min(100% - 2 * var(--folga),var(--largura));
+  margin:0 auto clamp(2.5rem,5vw,4rem);
+  max-width:46rem;
+}
+.titulo-secao__chapeu{
+  margin:0 0 .7rem;
+  font-size:.74rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--terracota);
+}
+.titulo-secao h2{
+  font-size:clamp(1.75rem,3.6vw,2.7rem);
+  max-width:20ch;
+}
+.titulo-secao__apoio{
+  margin:1rem 0 0;
+  max-width:44ch;
+  color:var(--tinta-suave);
+}
+.titulo-secao--claro .titulo-secao__chapeu{color:var(--girassol-claro)}
+.titulo-secao--claro h2{color:var(--creme)}
+
+/* === BOTÕES === */
+.bt{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:50px;
+  padding:.8rem 1.9rem;
+  border:1.5px solid transparent;
+  border-radius:999px;
+  font-size:.86rem;font-weight:500;letter-spacing:.02em;
+  transition:transform .28s var(--suave),background-color .28s var(--suave),
+             color .28s var(--suave),border-color .28s var(--suave),box-shadow .28s var(--suave);
+}
+.bt:hover{transform:translateY(-2px)}
+.bt:active{transform:translateY(0)}
+
+.bt--sol{
+  background:var(--girassol);
+  color:var(--cafe);
+  border-color:var(--girassol);
+  box-shadow:0 8px 20px rgba(232,164,23,.28);
+}
+.bt--sol:hover{background:var(--girassol-claro);border-color:var(--girassol-claro)}
+
+.bt--linha{
+  background:transparent;
+  color:var(--creme);
+  border-color:rgba(255,253,248,.4);
+}
+.bt--linha:hover{background:rgba(255,253,248,.1);border-color:var(--creme)}
+
+/* === CABEÇALHO ===
+   Fixo e sempre sólido, diferente de um header transparente sobre foto: o
+   hero tem painel de cor à esquerda e foto à direita, e um header vazado
+   ficaria ilegível na metade clara. */
+.topo{
+  position:fixed;inset:0 0 auto;z-index:100;
+  background:rgba(250,246,238,.9);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid transparent;
+  transition:border-color .35s var(--suave),box-shadow .35s var(--suave);
+}
+.topo.fixado{border-bottom-color:var(--borda);box-shadow:var(--sombra-p)}
+
+.topo__interno{
+  width:min(100% - 2 * var(--folga),var(--largura));
+  margin-inline:auto;
+  display:flex;align-items:center;gap:1.5rem;
+  padding-block:.85rem;
+}
+
+.marca{display:flex;align-items:center;gap:.6rem;color:var(--cafe)}
+.marca__selo{
+  display:grid;place-items:center;
+  width:44px;height:44px;
+  color:var(--girassol);
+  background:var(--cafe);
+  border-radius:50%;
+  transition:transform .5s var(--suave);
+}
+.marca:hover .marca__selo{transform:rotate(12deg)}
+.marca__nome{
+  display:flex;flex-direction:column;
+  font-family:var(--serif);
+  font-size:1.3rem;font-weight:600;line-height:1;
+}
+.marca__nome small{
+  font-family:var(--sans);
+  font-size:.56rem;font-weight:400;letter-spacing:.28em;text-transform:uppercase;
+  opacity:.62;margin-top:.32rem;
+}
+
+.menu{display:flex;align-items:center;gap:clamp(1rem,2.2vw,2rem);margin-left:auto}
+.menu a{
+  position:relative;
+  font-size:.9rem;
+  color:var(--cafe-claro);
+  transition:color .3s var(--suave);
+}
+.menu a::after{
+  content:"";position:absolute;left:0;bottom:-5px;
+  width:100%;height:2px;
+  background:var(--girassol);
+  border-radius:2px;
+  transform:scaleX(0);transform-origin:right;
+  transition:transform .35s var(--suave);
+}
+.menu a:hover{color:var(--cafe)}
+.menu a:hover::after{transform:scaleX(1);transform-origin:left}
+
+.topo__zap{
+  display:inline-flex;align-items:center;gap:.45rem;
+  padding:.6rem 1.15rem;
+  font-size:.84rem;font-weight:500;
+  color:var(--cafe);
+  background:var(--girassol);
+  border-radius:999px;
+  transition:background-color .3s var(--suave),transform .3s var(--suave);
+}
+.topo__zap:hover{background:var(--girassol-claro);transform:translateY(-2px)}
+
+.sanduiche{
+  display:none;
+  width:46px;height:46px;
+  padding:12px 10px;
+  margin-left:auto;
+  flex-direction:column;justify-content:space-between;
+}
+.sanduiche span{
+  display:block;height:2px;width:100%;
+  background:var(--cafe);
+  border-radius:2px;
+  transition:transform .35s var(--suave),opacity .25s var(--suave);
+}
+.sanduiche[aria-expanded="true"] span:nth-child(1){transform:translateY(9px) rotate(45deg)}
+.sanduiche[aria-expanded="true"] span:nth-child(2){opacity:0}
+.sanduiche[aria-expanded="true"] span:nth-child(3){transform:translateY(-9px) rotate(-45deg)}
+
+/* === HERO EM DUAS COLUNAS === */
+.hero{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  min-height:100svh;
+  background:var(--cafe);
+}
+
+.hero__texto{
+  display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(7rem,14vh,9rem) clamp(1.5rem,5vw,4.5rem) clamp(3.5rem,8vh,5rem);
+  color:var(--creme);
+}
+.hero__chapeu{
+  margin:0 0 1.1rem;
+  font-size:.76rem;letter-spacing:.28em;text-transform:uppercase;
+  color:var(--girassol-claro);
+}
+.hero__titulo{
+  font-size:clamp(2.3rem,4.6vw,3.9rem);
+  font-weight:500;
+  color:var(--creme);
+  margin-bottom:1.6rem;
+}
+.hero__resumo{
+  max-width:34ch;
+  color:rgba(255,253,248,.76);
+  margin-bottom:2rem;
+}
+.hero__botoes{display:flex;flex-wrap:wrap;gap:.85rem}
+.hero__nota{
+  display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;
+  margin-top:2.4rem;
+  font-size:.84rem;
+  color:rgba(255,253,248,.66);
+}
+.hero__nota strong{color:var(--creme);font-weight:500}
+.estrelas{display:inline-flex;gap:2px;color:var(--girassol)}
+.estrelas svg{fill:currentColor}
+
+.hero__foto{position:relative;overflow:hidden}
+/* A imagem sai do fluxo de propósito: com height:100% dentro de um pai de
+   altura automática, a porcentagem vira auto e a foto assumia a altura
+   intrínseca, esticando o hero muito além de 100svh. */
+.hero__foto img{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  animation:respiraFoto 24s ease-in-out infinite alternate;
+}
+@keyframes respiraFoto{
+  from{transform:scale(1.02)}
+  to{transform:scale(1.12)}
+}
+
+/* Etiqueta girassol, na emenda entre o painel e a foto. Fica fora de
+   .hero__foto de propósito: aquele bloco tem overflow:hidden por causa do
+   zoom da imagem, e cortava a etiqueta. O deslocamento horizontal usa
+   margin, não translate, para não disputar o transform da animação. */
+.hero__etiqueta{
+  position:absolute;z-index:4;
+  left:50%;
+  margin-left:calc(clamp(96px,12vw,128px) / -2);
+  bottom:clamp(2rem,6vh,4.5rem);
+  display:grid;place-items:center;gap:.1rem;
+  width:clamp(96px,12vw,128px);
+  aspect-ratio:1;
+  padding:1rem;
+  text-align:center;
+  font-size:.72rem;line-height:1.3;
+  color:var(--cafe);
+  background:var(--girassol);
+  border-radius:50%;
+  box-shadow:var(--sombra-m);
+  animation:balanca 6s ease-in-out infinite alternate;
+}
+.hero__etiqueta b{
+  display:block;
+  font-family:var(--serif);
+  font-size:1.05rem;font-weight:600;
+}
+@keyframes balanca{
+  from{transform:rotate(-7deg)}
+  to{transform:rotate(7deg)}
+}
+
+/* === SERVIÇOS ===
+   A seção sobe por cima do hero com o topo arredondado: é a emenda entre
+   blocos que substitui a divisória recortada. */
+.servicos{
+  position:relative;z-index:3;
+  margin-top:calc(var(--curva) * -1);
+  padding-block:var(--secao-y);
+  background:var(--areia);
+  border-radius:var(--curva) var(--curva) 0 0;
+}
+
+.cartoes{
+  width:min(100% - 2 * var(--folga),var(--largura));
+  margin-inline:auto;
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:clamp(1rem,2vw,1.6rem);
+}
+.cartao{
+  padding:clamp(1.4rem,2.4vw,2rem);
+  background:var(--creme);
+  border:1px solid var(--borda);
+  border-radius:18px;
+  transition:transform .4s var(--suave),box-shadow .4s var(--suave),border-color .4s var(--suave);
+}
+.cartao:hover{
+  transform:translateY(-6px);
+  box-shadow:var(--sombra-m);
+  border-color:transparent;
+}
+.cartao__icone{
+  display:grid;place-items:center;
+  width:54px;height:54px;
+  margin-bottom:1.1rem;
+  color:var(--sage);
+  background:rgba(126,143,110,.12);
+  border-radius:14px;
+}
+.cartao__icone svg{width:32px;height:32px}
+.cartao h3{font-size:1.22rem;margin-bottom:.45rem}
+.cartao p{margin:0;font-size:.9rem;color:var(--tinta-suave);line-height:1.6}
+
+/* === CATÁLOGO EM GRADE === */
+.catalogo{
+  padding-block:var(--secao-y);
+  background:
+    linear-gradient(180deg,var(--areia),#F4EEE2 40%,var(--areia));
+}
+
+.grade{
+  width:min(100% - 2 * var(--folga),var(--largura));
+  margin-inline:auto;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(1.1rem,2.2vw,1.8rem);
+}
+
+.item{
+  position:relative;
+  background:var(--creme);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:var(--sombra-p);
+  transition:transform .45s var(--suave),box-shadow .45s var(--suave);
+}
+.item:hover{transform:translateY(-7px);box-shadow:var(--sombra-m)}
+
+.item__foto{
+  position:relative;
+  aspect-ratio:4 / 3;
+  overflow:hidden;
+  background:#EDE6DA;
+}
+.item__foto img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .8s var(--suave);
+}
+.item:hover .item__foto img{transform:scale(1.06)}
+
+.item__marca{
+  position:absolute;top:.85rem;left:.85rem;
+  padding:.3rem .7rem;
+  font-size:.68rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--cafe);
+  background:var(--girassol);
+  border-radius:999px;
+}
+
+.item__corpo{padding:1.1rem 1.25rem 1.35rem}
+.item__topo{display:flex;align-items:baseline;justify-content:space-between;gap:.6rem}
+.item__nome{font-size:1.14rem}
+.item__preco{font-size:.95rem;font-weight:500;white-space:nowrap;color:var(--terracota)}
+.item__desc{
+  margin:.35rem 0 1rem;
+  font-size:.86rem;color:var(--tinta-suave);line-height:1.55;
+}
+.item__pedir{
+  display:inline-flex;align-items:center;gap:.45rem;
+  min-height:44px;
+  padding:.5rem 1.1rem;
+  font-size:.82rem;font-weight:500;
+  color:var(--cafe);
+  border:1.5px solid var(--cafe);
+  border-radius:999px;
+  transition:background-color .3s var(--suave),color .3s var(--suave),gap .3s var(--suave);
+}
+.item__pedir::after{content:"→"}
+.item__pedir:hover{background:var(--cafe);color:var(--creme);gap:.7rem}
+
+.catalogo__rodape{
+  width:min(100% - 2 * var(--folga),var(--largura));
+  margin:clamp(2rem,4vw,3rem) auto 0;
+  text-align:center;
+  color:var(--tinta-suave);
+}
+.catalogo__rodape a{
+  color:var(--terracota);
+  border-bottom:1.5px solid currentColor;
+  padding-bottom:1px;
+  transition:color .3s var(--suave);
+}
+.catalogo__rodape a:hover{color:var(--cafe)}
+
+/* === ENTREGA === */
+.entrega{
+  position:relative;
+  background:var(--cafe);
+  border-radius:var(--curva) var(--curva) 0 0;
+  overflow:hidden;
+}
+.entrega__capa{
+  height:clamp(180px,26vw,320px);
+  overflow:hidden;
+}
+.entrega__capa img{
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:center 58%;
+  opacity:.82;
+}
+.entrega__miolo{
+  padding-block:clamp(3rem,6vw,5rem) var(--secao-y);
+}
+
+.etapas{
+  width:min(100% - 2 * var(--folga),var(--largura));
+  margin:0 auto clamp(2.5rem,5vw,3.5rem);
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(1.5rem,3vw,2.8rem);
+}
+.etapas li{
+  padding-top:1.3rem;
+  border-top:2px solid rgba(255,253,248,.18);
+}
+.etapas__num{
+  display:block;
+  margin-bottom:.7rem;
+  font-family:var(--serif);
+  font-size:1.5rem;font-weight:600;
+  color:var(--girassol);
+}
+.etapas h3{
+  font-size:1.2rem;
+  color:var(--creme);
+  margin-bottom:.4rem;
+}
+.etapas p{
+  margin:0;
+  font-size:.9rem;
+  color:rgba(255,253,248,.68);
+  line-height:1.6;
+}
+
+.entrega__pe{
+  width:min(100% - 2 * var(--folga),var(--largura));
+  margin-inline:auto;
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  gap:1.5rem;
+  padding-top:clamp(1.8rem,3vw,2.4rem);
+  border-top:1px solid rgba(255,253,248,.14);
+}
+.entrega__rotulo{
+  margin:0 0 .55rem;
+  font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;
+  color:rgba(255,253,248,.5);
+}
+.bandeiras{
+  display:flex;flex-wrap:wrap;align-items:center;
+  gap:clamp(.9rem,2.2vw,1.3rem);
+  color:rgba(255,253,248,.9);
+}
+.bandeiras li{display:flex;align-items:center}
+.bandeiras svg{height:21px;width:auto}
+
+/* === CONTATO === */
+.contato{padding-block:var(--secao-y)}
+
+.contato__grade{
+  width:min(100% - 2 * var(--folga),var(--largura));
+  margin-inline:auto;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(1.6rem,3vw,3rem);
+}
+.contato__bloco{
+  padding:clamp(1.4rem,2.4vw,2rem);
+  background:var(--creme);
+  border:1px solid var(--borda);
+  border-radius:18px;
+}
+.contato__bloco h3{font-size:1.2rem;margin-bottom:.9rem}
+.contato__bloco address{color:var(--tinta-suave);line-height:1.85}
+
+.seta{
+  display:inline-flex;align-items:center;gap:.4rem;
+  margin-top:1rem;
+  font-size:.86rem;font-weight:500;
+  color:var(--terracota);
+  transition:gap .3s var(--suave),color .3s var(--suave);
+}
+.seta::after{content:"→"}
+.seta:hover{gap:.7rem;color:var(--cafe)}
+.seta--insta{margin-top:1.1rem}
+
+.horarios li{
+  display:flex;justify-content:space-between;gap:1rem;
+  padding:.42rem 0;
+  font-size:.9rem;
+  color:var(--tinta-suave);
+  border-bottom:1px solid var(--borda);
+}
+.horarios li.hoje{color:var(--cafe);font-weight:500}
+.horarios li.hoje span:first-child::before{
+  content:"";
+  display:inline-block;
+  width:6px;height:6px;
+  margin-right:.5rem;margin-bottom:2px;
+  background:var(--girassol);
+  border-radius:50%;
+}
+.horarios__aviso{
+  margin-top:.9rem;
+  font-size:.78rem;
+  color:var(--tinta-suave);
+  opacity:.75;
+}
+
+.contato__fone{
+  display:block;
+  font-family:var(--serif);
+  font-size:1.7rem;font-weight:600;
+  transition:color .3s var(--suave);
+}
+.contato__fone:hover{color:var(--terracota)}
+.contato__estado{
+  display:inline-flex;align-items:center;gap:.45rem;
+  margin:.5rem 0 1.3rem;
+  font-size:.84rem;
+  color:var(--tinta-suave);
+}
+.contato__estado::before{
+  content:"";width:8px;height:8px;border-radius:50%;
+  background:var(--sage);
+}
+.contato__estado.fechada::before{background:var(--terracota)}
+
+.mapa{
+  width:min(100% - 2 * var(--folga),var(--largura));
+  margin:clamp(2.2rem,4vw,3.5rem) auto 0;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid var(--borda);
+}
+.mapa iframe{
+  width:100%;height:clamp(240px,32vw,380px);border:0;
+  filter:grayscale(.9) sepia(.15) contrast(.96);
+  transition:filter .5s var(--suave);
+}
+.mapa:hover iframe{filter:none}
+
+/* === RODAPÉ === */
+.rodape{
+  background:var(--cafe);
+  color:rgba(255,253,248,.66);
+  padding-block:clamp(2rem,4vw,3rem);
+  border-radius:var(--curva) var(--curva) 0 0;
+}
+.rodape__interno{
+  width:min(100% - 2 * var(--folga),var(--largura));
+  margin-inline:auto;
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  gap:1.2rem;
+}
+.marca--rodape{color:var(--creme)}
+.marca--rodape .marca__selo{background:rgba(255,253,248,.1)}
+.rodape__aviso{margin:0;font-size:.8rem}
+
+/* === ANIMAÇÕES ===
+   A entrada do hero usa animation, não transition disparada por classe:
+   assim o conteúdo aparece sozinho mesmo se o JS falhar. */
+.hero__linha{display:block;overflow:hidden;padding-bottom:.08em}
+.hero__linha > span{
+  display:block;
+  animation:sobeLinha 1s cubic-bezier(.16,.84,.34,1) both;
+}
+.hero__linha:nth-child(1) > span{animation-delay:.3s}
+.hero__linha:nth-child(2) > span{animation-delay:.45s}
+@keyframes sobeLinha{
+  from{transform:translateY(115%)}
+  to{transform:none}
+}
+
+[data-entra]{animation:entra .85s var(--suave) var(--atraso,0s) both}
+@keyframes entra{
+  from{opacity:0;transform:translateY(22px)}
+  to{opacity:1;transform:none}
+}
+
+/* o resto da página entra ao chegar na tela */
+[data-revela]{
+  opacity:0;
+  transform:translateY(24px);
+  transition:opacity .75s var(--suave),transform .75s var(--suave);
+  transition-delay:var(--atraso,0ms);
+}
+[data-revela].visivel{opacity:1;transform:none}
+
+/* === RESPONSIVO === */
+@media (max-width:1100px){
+  .cartoes{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grade{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media (max-width:900px){
+  .sanduiche{display:flex}
+  .topo__zap{display:none}
+
+  .menu{
+    position:fixed;inset:0 0 0 auto;
+    width:min(78vw,300px);
+    flex-direction:column;align-items:flex-start;justify-content:center;
+    gap:1.5rem;
+    margin-left:0;
+    padding:2rem var(--folga);
+    background:var(--creme);
+    box-shadow:-16px 0 44px rgba(58,42,30,.18);
+    transform:translateX(100%);
+    transition:transform .42s var(--suave);
+    visibility:hidden;
+  }
+  .menu.aberto{transform:none;visibility:visible}
+  .menu a{font-size:1.05rem;color:var(--cafe)}
+
+  /* hero empilha: foto primeiro, texto embaixo */
+  .hero{grid-template-columns:1fr;min-height:0}
+  .hero__foto{order:-1;height:clamp(300px,52vh,460px)}
+  .hero__texto{padding-block:clamp(2.5rem,7vh,4rem) clamp(3rem,8vh,4.5rem)}
+  /* empilhado, a etiqueta senta na emenda entre a foto e o texto */
+  .hero__etiqueta{
+    left:auto;margin-left:0;
+    right:clamp(1rem,5vw,2.5rem);
+    top:calc(clamp(300px,52vh,460px) - clamp(96px,12vw,128px) / 2);
+    bottom:auto;
+  }
+
+  .contato__grade{grid-template-columns:1fr}
+  .etapas{grid-template-columns:1fr;gap:1.6rem}
+}
+
+@media (max-width:640px){
+  .cartoes{grid-template-columns:1fr}
+  .grade{grid-template-columns:1fr;max-width:26rem}
+  .hero__botoes .bt{flex:1 1 100%}
+  .entrega__pe{flex-direction:column;align-items:stretch}
+  .entrega__pe .bt{width:100%}
+  .rodape__interno{flex-direction:column;text-align:center}
+}
+
+/* === MOVIMENTO REDUZIDO === */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  [data-revela]{opacity:1;transform:none}
+  [data-entra],.hero__linha > span{animation:none;opacity:1;transform:none}
+  .hero__foto img,.hero__etiqueta{animation:none}
+}
