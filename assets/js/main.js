@@ -10,8 +10,39 @@
      --------------------------------------------------------- */
 
   // Celular do perfil da loja no Google, no formato 55 + DDD + número.
-  // O Facebook da loja divulga esse mesmo número como WhatsApp.
+  // A página do Facebook da loja divulga esse mesmo número como WhatsApp.
   var WHATSAPP = '5531983031214';
+
+  // TODO: NOMES E DESCRIÇÕES SÃO FICTÍCIOS — substituir pelos arranjos reais.
+  // As fotos são do Pexels; troque por fotos da loja em assets/img/.
+  // O nome curto é o que aparece na fita grande, então cabe uma palavra só.
+  var BUQUES = [
+    {
+      nome: 'Girassol', tipo: 'Buquê pronto', foto: '12272311',
+      texto: 'Girassóis abertos com rosas e folhagem, embalados em papel kraft. ' +
+             'É o buquê que ilumina a mesa e não pede ocasião.'
+    },
+    {
+      nome: 'Peônia', tipo: 'Buquê pronto', foto: '3392982',
+      texto: 'Peônias em papel claro, poucas flores e muito volume. Para pedir ' +
+             'desculpas, dizer sim ou simplesmente chegar com flor na mão.'
+    },
+    {
+      nome: 'Esmeralda', tipo: 'Buquê assinatura', foto: '34990301',
+      texto: 'Flores da estação em papel verde escuro, com laço de cetim. ' +
+             'Composição mais fechada, para presente de peso.'
+    },
+    {
+      nome: 'Jardim', tipo: 'Planta em vaso', foto: '21750830',
+      texto: 'Suculentas, cactos e ornamentais de vaso. Presente que fica, ' +
+             'com orientação de rega e de sol na hora da entrega.'
+    },
+    {
+      nome: 'Secas', tipo: 'Arranjo seco', foto: '18088260',
+      texto: 'Composição em tons secos, com folhagem e flores desidratadas. ' +
+             'Dura meses e não precisa de água.'
+    }
+  ];
 
   /* --------------------------------------------------------- */
 
@@ -20,6 +51,11 @@
   var $$ = function (s, ctx) {
     return Array.prototype.slice.call((ctx || document).querySelectorAll(s));
   };
+
+  function urlFoto(id, largura) {
+    return 'https://images.pexels.com/photos/' + id + '/pexels-photo-' + id +
+           '.jpeg?auto=compress&cs=tinysrgb&w=' + largura;
+  }
 
   /* === Links de WhatsApp ===
      Cada elemento com data-wa vira um link com a mensagem já escrita. */
@@ -34,8 +70,8 @@
 
   /* === Menu em tela estreita === */
   (function menu() {
-    var botao = $('#sanduiche');
-    var nav = $('#menu');
+    var botao = $('#menuBt');
+    var nav = $('#nav');
     if (!botao || !nav) return;
 
     function fechar() {
@@ -88,6 +124,97 @@
     });
   })();
 
+  /* === Vitrine: a fita de nomes e a ficha andam juntas === */
+  (function vitrine() {
+    var trilho = $('#fitaTrilho');
+    var fita = trilho && trilho.parentElement;
+    var foto = $('#fichaFoto');
+    if (!trilho || !foto) return;
+
+    var tipo = $('#fichaTipo');
+    var nome = $('#fichaNome');
+    var texto = $('#fichaTexto');
+    var link = $('#fichaLink');
+    var aviso = $('#fichaAviso');
+    var indice = 0;
+    var palavras = [];
+
+    // A lista entra três vezes: assim sempre há nome à esquerda e à direita do
+    // ativo, e a fita parece não ter começo nem fim. O ativo é sempre o da
+    // cópia do meio.
+    var COPIAS = 3;
+    for (var c = 0; c < COPIAS; c++) {
+      BUQUES.forEach(function (b, i) {
+        var li = document.createElement('li');
+        li.textContent = b.nome;
+        li.addEventListener('click', function () { ir(i); });
+        trilho.appendChild(li);
+        palavras.push(li);
+      });
+    }
+
+    function noMeio(i) { return BUQUES.length + i; }
+
+    function centralizar() {
+      var alvo = palavras[noMeio(indice)];
+      if (!alvo) return;
+      // desloca o trilho até o nome ativo ficar no meio da janela da fita
+      var meioFita = fita.getBoundingClientRect().width / 2;
+      var meioPalavra = alvo.offsetLeft + alvo.offsetWidth / 2;
+      trilho.style.transform = 'translate3d(' + (meioFita - meioPalavra).toFixed(1) + 'px,0,0)';
+    }
+
+    function pintar() {
+      palavras.forEach(function (p, i) {
+        p.classList.toggle('ativo', i === noMeio(indice));
+      });
+
+      var b = BUQUES[indice];
+      tipo.textContent = b.tipo;
+      nome.textContent = '«' + b.nome + '»';
+      texto.textContent = b.texto;
+      link.setAttribute('data-wa', 'Olá! Tenho interesse no ' +
+                        b.tipo.toLowerCase() + ' ' + b.nome + '.');
+      aplicarZap(link.parentElement);
+      if (aviso) aviso.textContent = b.nome + ', ' + (indice + 1) + ' de ' + BUQUES.length;
+
+      // troca a foto com um respiro, para não piscar entre uma e outra
+      foto.classList.add('trocando');
+      var nova = new Image();
+      nova.onload = nova.onerror = function () {
+        foto.src = nova.src;
+        foto.alt = b.tipo + ' ' + b.nome;
+        foto.classList.remove('trocando');
+      };
+      nova.src = urlFoto(b.foto, 900);
+
+      centralizar();
+    }
+
+    function ir(i) {
+      indice = (i + BUQUES.length) % BUQUES.length;   // gira sem fim
+      pintar();
+    }
+
+    $('#setaAnterior').addEventListener('click', function () { ir(indice - 1); });
+    $('#setaProximo').addEventListener('click', function () { ir(indice + 1); });
+
+    fita.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); ir(indice - 1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); ir(indice + 1); }
+    });
+
+    var t;
+    window.addEventListener('resize', function () {
+      clearTimeout(t);
+      t = setTimeout(centralizar, 150);
+    });
+
+    pintar();
+    // as larguras mudam quando a fonte carrega, e a conta do centro muda junto
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(centralizar);
+  })();
+
   /* === Entrada ao chegar na tela === */
   (function revela() {
     var alvos = $$('[data-revela]');
@@ -103,19 +230,6 @@
         io.unobserve(entrada.target);
       });
     }, { rootMargin: '0px 0px -10% 0px', threshold: .1 });
-
-    // O escalonamento é por grupo de irmãos, não pela ordem global da página.
-    var porPai = new Map();
-    alvos.forEach(function (el) {
-      var lista = porPai.get(el.parentElement) || [];
-      lista.push(el);
-      porPai.set(el.parentElement, lista);
-    });
-    porPai.forEach(function (lista) {
-      lista.forEach(function (el, i) {
-        el.style.setProperty('--atraso', Math.min(i * 80, 400) + 'ms');
-      });
-    });
 
     alvos.forEach(function (el) { io.observe(el); });
   })();
