@@ -25,7 +25,7 @@
   --largura:1200px;
   --folga:clamp(1.25rem,5vw,3.5rem);
   --secao-y:clamp(4.5rem,9vw,8rem);
-  --curva:clamp(28px,4vw,56px);
+  --folhagem-h:clamp(46px,5.5vw,80px);
 
   --suave:cubic-bezier(.22,.61,.36,1);
 
@@ -143,6 +143,29 @@ address{font-style:normal}
 }
 .bt--linha:hover{background:rgba(255,253,248,.1);border-color:var(--creme)}
 
+/* === DIVISÓRIA DE FOLHAGEM ===
+   Um único SVG aplicado como mask-image: a cor vem do background-color, então
+   a mesma imagem serve para qualquer emenda entre seções. A variante de cima é
+   a de baixo espelhada. Sem suporte a máscara vira uma faixa lisa, e o layout
+   não quebra. */
+.folhagem{
+  position:absolute;left:0;right:0;
+  height:var(--folhagem-h);
+  z-index:5;
+  pointer-events:none;
+  background-color:var(--areia);
+}
+.folhagem--baixo{bottom:-1px}
+.folhagem--cima{top:-1px}
+
+@supports (mask-image:url("../img/folhagem.svg")) or (-webkit-mask-image:url("../img/folhagem.svg")){
+  .folhagem{
+    -webkit-mask:url("../img/folhagem.svg") repeat-x bottom center/auto 100%;
+            mask:url("../img/folhagem.svg") repeat-x bottom center/auto 100%;
+  }
+  .folhagem--cima{transform:scaleY(-1)}
+}
+
 /* === CABEÇALHO ===
    Fixo e sempre sólido, diferente de um header transparente sobre foto: o
    hero tem painel de cor à esquerda e foto à direita, e um header vazado
@@ -241,14 +264,47 @@ address{font-style:normal}
 }
 
 .hero__texto{
+  position:relative;
   display:flex;flex-direction:column;justify-content:center;
-  padding:clamp(7rem,14vh,9rem) clamp(1.5rem,5vw,4.5rem) clamp(3.5rem,8vh,5rem);
+  padding:clamp(7rem,14vh,9rem) clamp(1.5rem,5vw,4.5rem) clamp(4rem,10vh,6rem);
   color:var(--creme);
+  overflow:hidden;
+}
+/* textura botânica discreta. Vem por máscara, e não por background-blend-mode:
+   assim a cor e a opacidade são controladas, em vez de depender de como o
+   blend reage ao marrom. */
+.hero__texto::before{
+  content:"";
+  position:absolute;inset:0;z-index:0;
+  background:var(--girassol);
+  opacity:.07;
+  -webkit-mask:url("../img/padrao.svg") repeat center/260px;
+          mask:url("../img/padrao.svg") repeat center/260px;
+}
+.hero__conteudo{position:relative;z-index:2}
+
+/* ramo grande no canto, atrás do texto */
+.hero__ramo{
+  position:absolute;z-index:1;
+  right:-3%;top:6%;
+  width:min(46%,300px);aspect-ratio:200 / 320;
+  background:var(--girassol);
+  opacity:.14;
+  -webkit-mask:url("../img/ramo.svg") no-repeat center/contain;
+          mask:url("../img/ramo.svg") no-repeat center/contain;
+  transform:rotate(14deg);
 }
 .hero__chapeu{
+  display:flex;align-items:center;gap:.6rem;
   margin:0 0 1.1rem;
   font-size:.76rem;letter-spacing:.28em;text-transform:uppercase;
   color:var(--girassol-claro);
+}
+.ponto{
+  width:7px;height:7px;
+  background:var(--girassol);
+  border-radius:50%;
+  box-shadow:0 0 0 5px rgba(232,164,23,.18);
 }
 .hero__titulo{
   font-size:clamp(2.3rem,4.6vw,3.9rem);
@@ -256,20 +312,56 @@ address{font-style:normal}
   color:var(--creme);
   margin-bottom:1.6rem;
 }
+/* palavra em destaque, com um traço desenhado por baixo */
+.hero__titulo em{
+  position:relative;
+  font-style:normal;
+  color:var(--girassol);
+}
+.hero__titulo em::after{
+  content:"";
+  position:absolute;left:-2%;right:-2%;bottom:.02em;
+  height:.16em;
+  background:var(--girassol);
+  opacity:.34;
+  border-radius:999px 999px 40% 60% / 999px 999px 60% 40%;
+}
 .hero__resumo{
   max-width:34ch;
   color:rgba(255,253,248,.76);
   margin-bottom:2rem;
 }
 .hero__botoes{display:flex;flex-wrap:wrap;gap:.85rem}
-.hero__nota{
-  display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;
-  margin-top:2.4rem;
-  font-size:.84rem;
-  color:rgba(255,253,248,.66);
+.hero__fatos{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(.8rem,2vw,1.6rem);
+  margin-top:clamp(2.2rem,5vh,3.2rem);
+  padding-top:clamp(1.4rem,3vh,2rem);
+  border-top:1px solid rgba(255,253,248,.16);
 }
-.hero__nota strong{color:var(--creme);font-weight:500}
-.estrelas{display:inline-flex;gap:2px;color:var(--girassol)}
+.hero__fatos strong{
+  display:block;
+  font-family:var(--serif);
+  font-size:clamp(1rem,1.5vw,1.22rem);
+  font-weight:600;
+  color:var(--creme);
+}
+/* só a legenda direta do item, e não qualquer span: o span das estrelas mora
+   dentro do <strong> e não pode virar block, senão os SVGs empilham */
+.hero__fatos li > span{
+  display:block;
+  margin-top:.15rem;
+  font-size:.78rem;
+  color:rgba(255,253,248,.6);
+  line-height:1.4;
+}
+.hero__fatos .hero__fatos-nota{display:flex;align-items:center;gap:.4rem}
+.hero__fatos .estrelas,
+.estrelas{
+  display:inline-flex;flex:0 0 auto;gap:1px;
+  color:var(--girassol);
+}
 .estrelas svg{fill:currentColor}
 
 .hero__foto{position:relative;overflow:hidden}
@@ -287,46 +379,44 @@ address{font-style:normal}
   to{transform:scale(1.12)}
 }
 
-/* Etiqueta girassol, na emenda entre o painel e a foto. Fica fora de
-   .hero__foto de propósito: aquele bloco tem overflow:hidden por causa do
-   zoom da imagem, e cortava a etiqueta. O deslocamento horizontal usa
-   margin, não translate, para não disputar o transform da animação. */
-.hero__etiqueta{
+/* Foto redonda montada sobre a emenda, para as duas metades se cruzarem em
+   vez de ficarem lado a lado como dois retângulos. */
+.hero__medalhao{
   position:absolute;z-index:4;
-  left:50%;
-  margin-left:calc(clamp(96px,12vw,128px) / -2);
-  bottom:clamp(2rem,6vh,4.5rem);
-  display:grid;place-items:center;gap:.1rem;
-  width:clamp(96px,12vw,128px);
+  left:50%;top:50%;
+  width:clamp(130px,15vw,190px);
   aspect-ratio:1;
-  padding:1rem;
-  text-align:center;
-  font-size:.72rem;line-height:1.3;
-  color:var(--cafe);
-  background:var(--girassol);
+  margin:-16% 0 0 calc(clamp(130px,15vw,190px) / -2);
   border-radius:50%;
-  box-shadow:var(--sombra-m);
-  animation:balanca 6s ease-in-out infinite alternate;
+  overflow:hidden;
+  border:8px solid var(--areia);
+  box-shadow:var(--sombra-g);
+  animation:flutuaMedalhao 8s ease-in-out infinite alternate;
 }
-.hero__etiqueta b{
-  display:block;
-  font-family:var(--serif);
-  font-size:1.05rem;font-weight:600;
-}
-@keyframes balanca{
-  from{transform:rotate(-7deg)}
-  to{transform:rotate(7deg)}
+.hero__medalhao img{width:100%;height:100%;object-fit:cover}
+@keyframes flutuaMedalhao{
+  from{transform:translateY(-8px)}
+  to{transform:translateY(10px)}
 }
 
 /* === SERVIÇOS ===
    A seção sobe por cima do hero com o topo arredondado: é a emenda entre
    blocos que substitui a divisória recortada. */
 .servicos{
-  position:relative;z-index:3;
-  margin-top:calc(var(--curva) * -1);
-  padding-block:var(--secao-y);
+  position:relative;
+  padding-block:clamp(3.5rem,7vw,6rem);
   background:var(--areia);
-  border-radius:var(--curva) var(--curva) 0 0;
+}
+.servicos__ramo{
+  position:absolute;
+  right:2%;top:8%;
+  width:min(18%,160px);aspect-ratio:200 / 320;
+  background:var(--sage);
+  opacity:.16;
+  -webkit-mask:url("../img/ramo.svg") no-repeat center/contain;
+          mask:url("../img/ramo.svg") no-repeat center/contain;
+  transform:rotate(-16deg) scaleX(-1);
+  pointer-events:none;
 }
 
 .cartoes{
@@ -337,35 +427,60 @@ address{font-style:normal}
   gap:clamp(1rem,2vw,1.6rem);
 }
 .cartao{
-  padding:clamp(1.4rem,2.4vw,2rem);
+  position:relative;
+  padding:clamp(1.5rem,2.6vw,2.2rem);
   background:var(--creme);
-  border:1px solid var(--borda);
-  border-radius:18px;
-  transition:transform .4s var(--suave),box-shadow .4s var(--suave),border-color .4s var(--suave);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:var(--sombra-p);
+  transition:transform .4s var(--suave),box-shadow .4s var(--suave);
 }
-.cartao:hover{
-  transform:translateY(-6px);
-  box-shadow:var(--sombra-m);
-  border-color:transparent;
+/* faixa de cor no topo, que engorda no hover */
+.cartao::before{
+  content:"";
+  position:absolute;inset:0 0 auto;
+  height:5px;
+  background:var(--tom);
+  transition:height .4s var(--suave);
 }
+.cartao:hover{transform:translateY(-8px);box-shadow:var(--sombra-m)}
+.cartao:hover::before{height:9px}
+
+.cartao--sage{--tom:var(--sage)}
+.cartao--girassol{--tom:var(--girassol)}
+.cartao--terracota{--tom:var(--terracota)}
+
 .cartao__icone{
   display:grid;place-items:center;
-  width:54px;height:54px;
-  margin-bottom:1.1rem;
-  color:var(--sage);
-  background:rgba(126,143,110,.12);
-  border-radius:14px;
+  width:62px;height:62px;
+  margin-bottom:1.2rem;
+  color:var(--tom);
+  background:color-mix(in srgb,var(--tom) 14%,transparent);
+  border-radius:50%;
+  transition:transform .45s var(--suave);
 }
-.cartao__icone svg{width:32px;height:32px}
+.cartao:hover .cartao__icone{transform:rotate(-8deg) scale(1.06)}
+.cartao__icone svg{width:34px;height:34px}
 .cartao h3{font-size:1.22rem;margin-bottom:.45rem}
 .cartao p{margin:0;font-size:.9rem;color:var(--tinta-suave);line-height:1.6}
 
 /* === CATÁLOGO EM GRADE === */
 .catalogo{
-  padding-block:var(--secao-y);
+  position:relative;
+  padding-block:clamp(3.5rem,7vw,6rem);
   background:
-    linear-gradient(180deg,var(--areia),#F4EEE2 40%,var(--areia));
+    linear-gradient(180deg,var(--areia),#F2EBDD 45%,var(--areia));
 }
+/* textura botânica de fundo, bem apagada */
+.catalogo::before{
+  content:"";
+  position:absolute;inset:0;
+  background:url("../img/padrao.svg") repeat;
+  background-size:230px;
+  opacity:.045;
+  pointer-events:none;
+}
+.catalogo > *{position:relative;z-index:1}
 
 .grade{
   width:min(100% - 2 * var(--folga),var(--largura));
@@ -395,7 +510,16 @@ address{font-style:normal}
   width:100%;height:100%;object-fit:cover;
   transition:transform .8s var(--suave);
 }
-.item:hover .item__foto img{transform:scale(1.06)}
+.item:hover .item__foto img{transform:scale(1.07)}
+/* véu que sobe na foto no hover, para o cartão reagir ao toque */
+.item__foto::after{
+  content:"";
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(58,42,30,.55),transparent 55%);
+  opacity:0;
+  transition:opacity .45s var(--suave);
+}
+.item:hover .item__foto::after{opacity:1}
 
 .item__marca{
   position:absolute;top:.85rem;left:.85rem;
@@ -445,18 +569,28 @@ address{font-style:normal}
 .entrega{
   position:relative;
   background:var(--cafe);
-  border-radius:var(--curva) var(--curva) 0 0;
   overflow:hidden;
 }
+.entrega__miolo{position:relative}
+.entrega__miolo::before{
+  content:"";
+  position:absolute;inset:0;
+  background:url("../img/padrao.svg") repeat;
+  background-size:200px;
+  opacity:.05;
+  pointer-events:none;
+}
+.entrega__miolo > *{position:relative;z-index:1}
 .entrega__capa{
-  height:clamp(180px,26vw,320px);
+  height:clamp(230px,30vw,380px);
   overflow:hidden;
 }
 .entrega__capa img{
   width:100%;height:100%;
   object-fit:cover;
-  object-position:center 58%;
-  opacity:.82;
+  /* enquadra o vaso e as plantas, e não a faixa central de esquadria */
+  object-position:center 34%;
+  opacity:.9;
 }
 .entrega__miolo{
   padding-block:clamp(3rem,6vw,5rem) var(--secao-y);
@@ -470,14 +604,21 @@ address{font-style:normal}
   gap:clamp(1.5rem,3vw,2.8rem);
 }
 .etapas li{
-  padding-top:1.3rem;
+  position:relative;
+  padding-top:1.5rem;
   border-top:2px solid rgba(255,253,248,.18);
+}
+.etapas li::before{
+  content:"";
+  position:absolute;left:0;top:-2px;
+  width:38%;height:2px;
+  background:var(--girassol);
 }
 .etapas__num{
   display:block;
   margin-bottom:.7rem;
   font-family:var(--serif);
-  font-size:1.5rem;font-weight:600;
+  font-size:clamp(1.6rem,2.6vw,2.1rem);font-weight:600;
   color:var(--girassol);
 }
 .etapas h3{
@@ -601,10 +742,10 @@ address{font-style:normal}
 
 /* === RODAPÉ === */
 .rodape{
+  position:relative;
   background:var(--cafe);
   color:rgba(255,253,248,.66);
-  padding-block:clamp(2rem,4vw,3rem);
-  border-radius:var(--curva) var(--curva) 0 0;
+  padding-block:calc(var(--folhagem-h) + clamp(1.5rem,3vw,2.5rem)) clamp(2rem,4vw,3rem);
 }
 .rodape__interno{
   width:min(100% - 2 * var(--folga),var(--largura));
@@ -675,14 +816,13 @@ address{font-style:normal}
   /* hero empilha: foto primeiro, texto embaixo */
   .hero{grid-template-columns:1fr;min-height:0}
   .hero__foto{order:-1;height:clamp(300px,52vh,460px)}
-  .hero__texto{padding-block:clamp(2.5rem,7vh,4rem) clamp(3rem,8vh,4.5rem)}
-  /* empilhado, a etiqueta senta na emenda entre a foto e o texto */
-  .hero__etiqueta{
-    left:auto;margin-left:0;
-    right:clamp(1rem,5vw,2.5rem);
-    top:calc(clamp(300px,52vh,460px) - clamp(96px,12vw,128px) / 2);
-    bottom:auto;
+  .hero__medalhao{
+    left:auto;right:clamp(1rem,5vw,2.5rem);
+    top:calc(clamp(300px,52vh,460px) - clamp(130px,15vw,190px) / 2);
+    margin:0;
   }
+  .hero__ramo{width:min(52%,220px);opacity:.1}
+  .hero__texto{padding-block:clamp(2.5rem,7vh,4rem) clamp(3rem,8vh,4.5rem)}
 
   .contato__grade{grid-template-columns:1fr}
   .etapas{grid-template-columns:1fr;gap:1.6rem}
@@ -690,6 +830,9 @@ address{font-style:normal}
 
 @media (max-width:640px){
   .cartoes{grid-template-columns:1fr}
+  .hero__fatos{grid-template-columns:1fr;gap:.9rem}
+  .hero__fatos li{display:flex;align-items:baseline;gap:.6rem}
+  .hero__fatos span{margin-top:0}
   .grade{grid-template-columns:1fr;max-width:26rem}
   .hero__botoes .bt{flex:1 1 100%}
   .entrega__pe{flex-direction:column;align-items:stretch}
@@ -708,5 +851,5 @@ address{font-style:normal}
   }
   [data-revela]{opacity:1;transform:none}
   [data-entra],.hero__linha > span{animation:none;opacity:1;transform:none}
-  .hero__foto img,.hero__etiqueta{animation:none}
+  .hero__foto img,.hero__medalhao{animation:none}
 }

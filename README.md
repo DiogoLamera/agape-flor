@@ -7,8 +7,21 @@ basta abrir o `index.html` ou publicar a pasta em qualquer hospedagem.
 index.html
 assets/css/style.css
 assets/js/main.js
+assets/img/folhagem.svg     divisória botânica entre as seções
+assets/img/padrao.svg       padrão sem emenda, textura dos blocos escuros
+assets/img/ramo.svg         ramo decorativo do hero e dos serviços
+tools/gerar-ornamentos.py   regera os três SVGs acima
 netlify.toml
 ```
+
+Os três ornamentos são gerados por script, sem editor de vetor:
+
+```
+python tools/gerar-ornamentos.py
+```
+
+Dá para mexer na densidade, no tamanho das folhas e na semente do sorteio
+direto no arquivo, e rodar de novo.
 
 Para rodar local com as fontes e o mapa funcionando:
 
@@ -80,16 +93,21 @@ esse caso.
 
 ## Detalhes de implementação
 
-- **Emenda entre seções**: em vez de uma divisória recortada, cada bloco sobe por
-  cima do anterior com o topo arredondado (`border-radius` + `margin-top` negativa).
-  Zero imagem, zero requisição.
+- **Emenda entre seções**: uma divisória de folhagem, aplicada como `mask-image`
+  e colorida por `background-color` — a mesma imagem serve para qualquer emenda, e
+  a variante de cima é a de baixo espelhada com `scaleY(-1)`. Sem suporte a
+  máscara vira uma faixa lisa, e o layout não quebra.
+- **Textura dos blocos escuros**: o padrão de folhas entra por máscara com
+  opacidade baixa, e não por `background-blend-mode` — assim a cor e a intensidade
+  são controladas, em vez de depender de como o blend reage ao marrom.
 - **Hero em duas colunas**: painel de cor à esquerda e foto à direita. A foto é
   posicionada em absoluto de propósito — com `height:100%` dentro de um pai de
   altura automática, a porcentagem vira `auto` e a imagem assumia a altura
   intrínseca, esticando o hero muito além de 100svh.
-- **Etiqueta girassol**: fica fora de `.hero__foto`, que tem `overflow:hidden` por
-  causa do zoom da imagem e a cortava. O deslocamento horizontal usa `margin`, e não
-  `translate`, para não disputar o `transform` da animação de balanço.
+- **Medalhão do hero**: a foto redonda fica fora de `.hero__foto`, que tem
+  `overflow:hidden` por causa do zoom da imagem e a cortaria. Ela monta sobre a
+  emenda para as duas metades se cruzarem, em vez de ficarem lado a lado como dois
+  retângulos.
 - **Entrada do hero**: feita com `animation`, não com `transition` disparada por
   classe, para o conteúdo aparecer sozinho mesmo se o JS falhar. O resto da página
   entra por `IntersectionObserver`, com atraso escalonado por grupo de irmãos.
