@@ -118,10 +118,14 @@ trata esse caso.
 - **Capa no celular**: abaixo de 900px a capa deixa de valer `100svh` e a foto
   ganha proporção 4/5 com teto em `vh`. Esticada até o pé de uma tela estreita
   ela virava um retrato altíssimo e cortava quase toda a imagem.
-- **Menu em tela estreita**: um painel compacto ancorado no canto superior
-  direito, com a altura vindo do conteúdo, e não uma gaveta de tela cheia. O topo
-  usa a altura real da barra, medida no JS e escrita em `--barra-h`, em vez de um
-  valor chutado no CSS. Atrás dele há uma cortina que fecha o menu no clique.
+- **Menu em tela estreita**: uma faixa que desce da barra, no mesmo vocabulário
+  de blocos de cor do resto do site — malva mais fundo, réguas de 1px e os itens
+  em tipografia grande e apertada. A altura vem do conteúdo, e o topo usa a
+  altura real da barra, medida no JS e escrita em `--barra-h`. Atrás dela há uma
+  cortina que fecha o menu no clique.
+  A barra precisa de `z-index` acima da cortina: a nav é filha dela, então o
+  `z-index` da nav não escapa desse contexto de empilhamento. Sem isso a cortina
+  ficava por cima dos links, e tocar num item fechava o menu em vez de navegar.
 - **Acessibilidade**: link para pular ao conteúdo, foco visível, menu com foco
   preso enquanto aberto e fechamento no `Esc`, setas do teclado na fita, aviso em
   `aria-live` a cada troca de buquê, e `prefers-reduced-motion` desligando as

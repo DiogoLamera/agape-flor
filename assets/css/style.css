@@ -95,7 +95,10 @@ address{font-style:normal}
    Fica por cima da capa, e não empurrando ela para baixo: assim a capa pode
    valer 100svh redondos e nada é cortado ao entrar no site. */
 .barra{
-  position:absolute;inset:0 0 auto;z-index:30;
+  /* z-index acima da cortina: a nav é filha da barra, então o z-index dela não
+     escapa deste contexto de empilhamento — sem isto a cortina ficava por cima
+     dos links e o toque fechava o menu em vez de navegar */
+  position:absolute;inset:0 0 auto;z-index:130;
   display:flex;align-items:center;gap:1.5rem;
   padding:clamp(.9rem,2vw,1.3rem) var(--folga);
 }
@@ -595,52 +598,52 @@ address{font-style:normal}
 @media (max-width:900px){
   .menu-bt{display:flex}
 
-  /* Painel compacto ancorado no canto, em vez de uma gaveta de tela cheia:
-     a altura vem do conteúdo. O topo usa a altura real da barra, medida no JS
-     e escrita em --barra-h. */
+  /* Faixa que desce da barra, no mesmo vocabulário de blocos de cor do resto
+     do site: malva mais fundo, réguas de 1px e tipografia grande e apertada.
+     A altura vem do conteúdo, e o topo usa a altura real da barra (--barra-h,
+     medida no JS). */
   .nav{
-    position:fixed;z-index:120;
-    top:calc(var(--barra-h,4.2rem) - .35rem);
-    right:var(--folga);
-    left:auto;
-    width:min(66vw,232px);
+    position:fixed;z-index:1;
+    top:var(--barra-h,4.2rem);
+    left:0;right:0;
+    width:auto;
     flex-direction:column;
     align-items:stretch;
     gap:0;
     margin:0;
-    padding:.35rem 0;
-    background:var(--papel);
-    box-shadow:0 18px 40px rgba(20,20,20,.22);
+    padding:.5rem var(--folga) 1.6rem;
+    background:var(--malva-fundo);
+    border-top:1px solid var(--regua-clara);
     opacity:0;
-    transform:translateY(-10px) scale(.98);
-    transform-origin:top right;
-    transition:opacity .26s var(--suave),transform .26s var(--suave),visibility .26s;
+    transform:translateY(-8px);
+    transition:opacity .28s var(--suave),transform .28s var(--suave),visibility .28s;
     visibility:hidden;
   }
   .nav.aberto{opacity:1;transform:none;visibility:visible}
 
   .nav a{
     display:block;
-    padding:.85rem 1.15rem;
-    font-size:.92rem;
-    color:var(--tinta);
+    padding:.7rem 0;
+    font-size:clamp(1.5rem,7vw,2rem);
+    font-weight:800;letter-spacing:-.035em;line-height:1.1;
+    color:var(--papel);
     opacity:1;
-    border-bottom:1px solid var(--regua);
-    transition:background-color .22s var(--suave);
+    border-bottom:1px solid var(--regua-clara);
+    transition:opacity .25s var(--suave),padding-left .25s var(--suave);
   }
-  .nav a:hover{background:rgba(20,20,20,.05);opacity:1}
+  .nav a:hover{opacity:.65;padding-left:.35rem}
 
+  /* o pedido fecha a faixa com o mesmo link sublinhado do resto do site */
   .nav__cta{
-    display:block;
-    margin:.35rem .6rem .25rem;
-    padding:.8rem 1.15rem !important;
-    text-align:center;
-    font-weight:600;
-    color:var(--papel) !important;
-    background:var(--tinta);
-    border-bottom:0 !important;
+    display:inline-block;
+    align-self:flex-start;
+    margin-top:1.3rem;
+    padding:0 0 3px !important;
+    font-size:.76rem !important;
+    font-weight:500;letter-spacing:.2em;text-transform:uppercase;
+    border-bottom:1px solid currentColor !important;
   }
-  .nav__cta:hover{background:#000}
+  .nav__cta:hover{opacity:.65;padding-left:0}
   /* o botão do menu encosta na direita; sem isto ele fica colado no logo,
      porque a nav sai do fluxo e o CTA some abaixo de 640px */
   .menu-bt{margin-left:auto}
