@@ -138,6 +138,8 @@ address{font-style:normal}
 }
 .barra__cta:hover{border-color:var(--papel)}
 
+.nav__cta{display:none}
+
 .menu-bt{
   display:none;
   width:40px;height:40px;
@@ -151,6 +153,15 @@ address{font-style:normal}
 }
 .menu-bt[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
 .menu-bt[aria-expanded="true"] span:nth-child(2){transform:translateY(-6px) rotate(-45deg)}
+
+/* cortina atrás do painel do menu */
+.cortina{
+  position:fixed;inset:0;z-index:110;
+  background:rgba(20,20,20,.4);
+  opacity:0;
+  transition:opacity .3s var(--suave);
+}
+.cortina.ativa{opacity:1}
 
 /* === CAPA ===
    A marca em corpo enorme fica por cima da foto, que entra recuada das
@@ -584,21 +595,52 @@ address{font-style:normal}
 @media (max-width:900px){
   .menu-bt{display:flex}
 
+  /* Painel compacto ancorado no canto, em vez de uma gaveta de tela cheia:
+     a altura vem do conteúdo. O topo usa a altura real da barra, medida no JS
+     e escrita em --barra-h. */
   .nav{
-    position:fixed;inset:0 0 0 auto;
-    width:min(74vw,280px);
-    flex-direction:column;justify-content:center;
-    gap:1.6rem;
+    position:fixed;z-index:120;
+    top:calc(var(--barra-h,4.2rem) - .35rem);
+    right:var(--folga);
+    left:auto;
+    width:min(66vw,232px);
+    flex-direction:column;
+    align-items:stretch;
+    gap:0;
     margin:0;
-    padding:2rem var(--folga);
-    background:var(--malva-fundo);
-    transform:translateX(100%);
-    transition:transform .42s var(--suave);
+    padding:.35rem 0;
+    background:var(--papel);
+    box-shadow:0 18px 40px rgba(20,20,20,.22);
+    opacity:0;
+    transform:translateY(-10px) scale(.98);
+    transform-origin:top right;
+    transition:opacity .26s var(--suave),transform .26s var(--suave),visibility .26s;
     visibility:hidden;
-    z-index:120;
   }
-  .nav.aberto{transform:none;visibility:visible}
-  .nav a{font-size:1.05rem}
+  .nav.aberto{opacity:1;transform:none;visibility:visible}
+
+  .nav a{
+    display:block;
+    padding:.85rem 1.15rem;
+    font-size:.92rem;
+    color:var(--tinta);
+    opacity:1;
+    border-bottom:1px solid var(--regua);
+    transition:background-color .22s var(--suave);
+  }
+  .nav a:hover{background:rgba(20,20,20,.05);opacity:1}
+
+  .nav__cta{
+    display:block;
+    margin:.35rem .6rem .25rem;
+    padding:.8rem 1.15rem !important;
+    text-align:center;
+    font-weight:600;
+    color:var(--papel) !important;
+    background:var(--tinta);
+    border-bottom:0 !important;
+  }
+  .nav__cta:hover{background:#000}
   /* o botão do menu encosta na direita; sem isto ele fica colado no logo,
      porque a nav sai do fluxo e o CTA some abaixo de 640px */
   .menu-bt{margin-left:auto}

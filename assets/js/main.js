@@ -72,23 +72,48 @@
   (function menu() {
     var botao = $('#menuBt');
     var nav = $('#nav');
+    var cortina = $('#cortina');
+    var barra = $('#barra');
     if (!botao || !nav) return;
+
+    // o painel abre logo abaixo da barra: a altura dela vai para uma variável,
+    // em vez de ser chutada no CSS
+    function medirBarra() {
+      if (barra) {
+        document.documentElement.style.setProperty(
+          '--barra-h', barra.getBoundingClientRect().height + 'px');
+      }
+    }
+    medirBarra();
+    window.addEventListener('resize', medirBarra);
 
     function fechar() {
       nav.classList.remove('aberto');
       botao.setAttribute('aria-expanded', 'false');
       botao.setAttribute('aria-label', 'Abrir menu');
-      document.body.style.overflow = '';
+      if (cortina) {
+        cortina.classList.remove('ativa');
+        // espera a transição para sumir de vez, senão ele pisca
+        setTimeout(function () {
+          if (!nav.classList.contains('aberto')) cortina.hidden = true;
+        }, 300);
+      }
     }
 
     function abrir() {
+      medirBarra();
       nav.classList.add('aberto');
       botao.setAttribute('aria-expanded', 'true');
       botao.setAttribute('aria-label', 'Fechar menu');
-      document.body.style.overflow = 'hidden';
+      if (cortina) {
+        cortina.hidden = false;
+        requestAnimationFrame(function () { cortina.classList.add('ativa'); });
+      }
       var primeiro = nav.querySelector('a');
       if (primeiro) primeiro.focus();
     }
+
+    if (cortina) cortina.addEventListener('click', fechar);
 
     botao.addEventListener('click', function () {
       nav.classList.contains('aberto') ? fechar() : abrir();
