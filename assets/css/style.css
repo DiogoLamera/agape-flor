@@ -555,32 +555,30 @@ address{font-style:normal}
 .capa__lado{animation:aparece 1s var(--suave) 1.15s both}
 .capa__desce{animation:aparece 1s var(--suave) 1.3s both}
 .capa__nota{animation:aparece .9s var(--suave) .8s both}
-@keyframes sobe{
-  from{opacity:0;transform:translateY(30px)}
-  to{opacity:1;transform:none}
-}
 @keyframes aparece{
   from{opacity:0}
   to{opacity:1}
 }
 
-/* título que sobe por trás de uma máscara ao entrar na tela */
+/* Título que sobe por trás de uma máscara ao entrar na tela.
+   O estado escondido vive sob .js: sem script, o texto aparece normalmente em
+   vez de ficar invisível para sempre. */
 [data-sobe] > span{display:block;overflow:hidden}
-[data-sobe] > span > span{
+.js [data-sobe] > span > span{
   display:block;
   transform:translateY(105%);
   transition:transform .95s cubic-bezier(.16,.84,.34,1) var(--atraso,0s);
 }
-[data-sobe].visivel > span > span{transform:none}
-[data-sobe] > span:nth-child(2) > span{transition-delay:.12s}
+.js [data-sobe].visivel > span > span{transform:none}
+.js [data-sobe] > span:nth-child(2) > span{transition-delay:.12s}
 
-[data-revela]{
+.js [data-revela]{
   opacity:0;
   transform:translateY(22px);
   transition:opacity .7s var(--suave),transform .7s var(--suave);
   transition-delay:var(--atraso,0ms);
 }
-[data-revela].visivel{opacity:1;transform:none}
+.js [data-revela].visivel{opacity:1;transform:none}
 
 /* === RESPONSIVO === */
 @media (max-width:900px){
@@ -601,9 +599,21 @@ address{font-style:normal}
   }
   .nav.aberto{transform:none;visibility:visible}
   .nav a{font-size:1.05rem}
-  .barra__cta{margin-left:auto}
+  /* o botão do menu encosta na direita; sem isto ele fica colado no logo,
+     porque a nav sai do fluxo e o CTA some abaixo de 640px */
+  .menu-bt{margin-left:auto}
+  .barra__cta{margin-left:auto;margin-right:.4rem}
 
-  .capa__foto{min-height:min(38vh,320px)}
+  /* No celular a capa deixa de valer 100svh: com a coluna estreita, a foto
+     esticada até o pé da tela virava um retrato altíssimo e cortava quase toda
+     a imagem. Aqui ela ganha proporção própria e a capa acompanha o conteúdo. */
+  .capa{min-height:auto}
+  .capa__foto{
+    flex:0 0 auto;
+    aspect-ratio:4 / 5;
+    min-height:0;
+    max-height:58vh;
+  }
   /* a legenda continua absoluta: a imagem está fora do fluxo, então uma
      legenda estática subiria para o topo da figura, por cima da foto */
   .capa__nota{
@@ -638,8 +648,8 @@ address{font-style:normal}
     transition-duration:.001ms !important;
     scroll-behavior:auto !important;
   }
-  [data-revela]{opacity:1;transform:none}
-  [data-sobe] > span > span{transform:none}
+  .js [data-revela]{opacity:1;transform:none}
+  .js [data-sobe] > span > span{transform:none}
   .capa__marca > span,.capa__foto,.capa__nota,.capa__foto img,
   .capa__lado,.capa__desce,.capa__desce-traco::after{
     animation:none;opacity:1;transform:none;clip-path:none;

@@ -111,6 +111,13 @@ trata esse caso.
 - **Etiqueta lateral**: usa `writing-mode:vertical-rl`, e não `rotate`. O texto
   girado por `transform` saía da caixa e era cortado pelo `overflow:hidden` da
   capa.
+- **Sem JavaScript o texto continua visível**: os estados iniciais das animações
+  de scroll (`[data-revela]`, `[data-sobe]`) são escritos sob `.js`, e essa classe
+  é posta no `<html>` por um script inline no `head`. Se o script não rodar, nada
+  fica escondido. Sem isso um título com máscara ficaria invisível para sempre.
+- **Capa no celular**: abaixo de 900px a capa deixa de valer `100svh` e a foto
+  ganha proporção 4/5 com teto em `vh`. Esticada até o pé de uma tela estreita
+  ela virava um retrato altíssimo e cortava quase toda a imagem.
 - **Acessibilidade**: link para pular ao conteúdo, foco visível, menu com foco
   preso enquanto aberto e fechamento no `Esc`, setas do teclado na fita, aviso em
   `aria-live` a cada troca de buquê, e `prefers-reduced-motion` desligando as

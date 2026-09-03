@@ -26,6 +26,11 @@
       href="https://images.pexels.com/photos/7693943/pexels-photo-7693943.jpeg?auto=compress&cs=tinysrgb&w=1600">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap">
 
+<!-- Marca que o JS está vivo. Os estados iniciais das animações de scroll são
+     escritos sob .js, então sem script nenhum texto fica escondido. Inline no
+     head para a classe chegar antes da primeira pintura. -->
+<script>document.documentElement.className += ' js';</script>
+
 <!-- CSS crítico do topo, para a capa pintar sem esperar o arquivo externo -->
 <style>
   :root{--malva:#C2A3A6;--tinta:#141414;--papel:#FFFFFF}
