@@ -611,7 +611,7 @@ address{font-style:normal}
     align-items:stretch;
     gap:0;
     margin:0;
-    padding:.5rem var(--folga) 1.6rem;
+    padding:.35rem var(--folga) 1.5rem;
     background:var(--malva-fundo);
     border-top:1px solid var(--regua-clara);
     opacity:0;
@@ -623,9 +623,11 @@ address{font-style:normal}
 
   .nav a{
     display:block;
-    padding:.7rem 0;
-    font-size:clamp(1.5rem,7vw,2rem);
-    font-weight:800;letter-spacing:-.035em;line-height:1.1;
+    /* o padding sustenta o alvo de toque em ~46px, mesmo com a fonte pequena */
+    padding:.95rem 0;
+    font-size:.82rem;
+    font-weight:500;letter-spacing:.16em;line-height:1.1;
+    text-transform:uppercase;
     color:var(--papel);
     opacity:1;
     border-bottom:1px solid var(--regua-clara);
@@ -637,9 +639,9 @@ address{font-style:normal}
   .nav__cta{
     display:inline-block;
     align-self:flex-start;
-    margin-top:1.3rem;
+    margin-top:1.2rem;
     padding:0 0 3px !important;
-    font-size:.76rem !important;
+    font-size:.78rem !important;
     font-weight:500;letter-spacing:.2em;text-transform:uppercase;
     border-bottom:1px solid currentColor !important;
   }
