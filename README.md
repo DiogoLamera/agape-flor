@@ -7,21 +7,16 @@ basta abrir o `index.html` ou publicar a pasta em qualquer hospedagem.
 index.html
 assets/css/style.css
 assets/js/main.js
-assets/img/folhagem.svg     divisória botânica entre as seções
-assets/img/padrao.svg       padrão sem emenda, textura dos blocos escuros
-assets/img/ramo.svg         ramo decorativo do hero e dos serviços
-tools/gerar-ornamentos.py   regera os três SVGs acima
+assets/img/ramo.svg         ramo decorativo da faixa rosé
+tools/gerar-ornamentos.py   regera o ramo
 netlify.toml
 ```
 
-Os três ornamentos são gerados por script, sem editor de vetor:
+O ramo é gerado por script, sem editor de vetor:
 
 ```
 python tools/gerar-ornamentos.py
 ```
-
-Dá para mexer na densidade, no tamanho das folhas e na semente do sorteio
-direto no arquivo, e rodar de novo.
 
 Para rodar local com as fontes e o mapa funcionando:
 
@@ -44,25 +39,14 @@ clique vem de um cartão do catálogo.
 O número é o celular do perfil da loja no Google, e a página do Facebook da loja
 divulga esse mesmo número como WhatsApp. Ainda assim, vale confirmar.
 
-### 2. Itens do catálogo
+### 2. As três categorias
 
-```js
-var ITENS = [
-  { nome: 'Buquê de Girassóis', preco: 'R$ 159', marca: 'mais pedido',
-    desc: '...', foto: 'px:12272311' },
-  ...
-];
-```
+A seção "O que temos" tem três categorias fixas no `index.html`: Flores, Plantas
+e mudas, e Cestas e presentes. Não há grade de produtos com preço — o pedido é
+fechado no WhatsApp, e cada botão já abre a conversa com a mensagem certa.
 
-**Os seis nomes, preços e descrições são fictícios**, só para a página ficar de pé.
-Troque pelos itens reais. A grade se ajusta sozinha à quantidade.
-
-- `marca` é opcional: deixe `''` para o cartão não exibir selo.
-- `pos` é opcional: define o `object-position` daquela foto, para o corte 4:3 não
-  cair num pedaço vazio da imagem.
-- `foto` aceita dois formatos: `px:123456` para uma foto do Pexels e
-  `un:photo-000...` para uma do Unsplash. A função `urlFoto()` monta a URL final.
-  Ao migrar para arquivos locais, troque essa função por um caminho direto.
+Se um dia quiser listar itens com preço, o lugar natural é uma nova seção entre
+"O que temos" e o Instagram.
 
 ### 3. Fotos
 
@@ -71,9 +55,9 @@ arquivos em `assets/img/` e substitua:
 
 | Onde | O que aparece |
 |---|---|
-| `index.html`, `<link rel="preload">` e `.hero__foto img` | foto grande do topo |
-| `index.html`, `.entrega__capa img` | faixa da seção Entrega |
-| `assets/js/main.js`, campo `foto` de cada item | foto de cada item do catálogo |
+| `index.html`, `<link rel="preload">` e `.capa__foto` | foto grande da capa |
+| `index.html`, `.coluna figure img` | as três fotos de "O que temos" |
+| `index.html`, `.tira img` | as quatro fotos da faixa do Instagram |
 
 ## Dados reais já publicados na página
 
@@ -93,27 +77,24 @@ esse caso.
 
 ## Detalhes de implementação
 
-- **Emenda entre seções**: uma divisória de folhagem, aplicada como `mask-image`
-  e colorida por `background-color` — a mesma imagem serve para qualquer emenda, e
-  a variante de cima é a de baixo espelhada com `scaleY(-1)`. Sem suporte a
-  máscara vira uma faixa lisa, e o layout não quebra.
-- **Textura dos blocos escuros**: o padrão de folhas entra por máscara com
-  opacidade baixa, e não por `background-blend-mode` — assim a cor e a intensidade
-  são controladas, em vez de depender de como o blend reage ao marrom.
-- **Hero em duas colunas**: painel de cor à esquerda e foto à direita. A foto é
-  posicionada em absoluto de propósito — com `height:100%` dentro de um pai de
-  altura automática, a porcentagem vira `auto` e a imagem assumia a altura
-  intrínseca, esticando o hero muito além de 100svh.
-- **Medalhão do hero**: a foto redonda fica fora de `.hero__foto`, que tem
-  `overflow:hidden` por causa do zoom da imagem e a cortaria. Ela monta sobre a
-  emenda para as duas metades se cruzarem, em vez de ficarem lado a lado como dois
-  retângulos.
-- **Entrada do hero**: feita com `animation`, não com `transition` disparada por
-  classe, para o conteúdo aparecer sozinho mesmo se o JS falhar. O resto da página
-  entra por `IntersectionObserver`, com atraso escalonado por grupo de irmãos.
-- **Bandeiras de pagamento**: marcas simplificadas, desenhadas em SVG inline no
-  HTML só para indicar o que a loja aceita. Se quiser os logos oficiais, substitua
-  os `<svg>` dentro de `<ul class="bandeiras">`.
+- **Faixas de cor**: a página é montada em faixas — marfim, rosé e verde se
+  alternam. Na seção "O que temos", a faixa verde passa por trás das fotos, que
+  ficam metade sobre o marfim e metade sobre o verde. É o corte que dá o ar
+  editorial, e não custa imagem nenhuma.
+- **Cabeçalho centrado**: marca em cima, menu embaixo. Não é fixo, para a capa
+  ganhar a tela inteira logo abaixo.
+- **Contraste da capa**: a foto é clara e cheia de pétala rosada. O véu combina
+  um radial que escurece o miolo, onde fica a leitura, com um gradiente vertical
+  — sem isso o texto branco some sobre as pétalas.
+- **Foto da capa em absoluto**: com `height:100%` dentro de um pai de altura
+  automática a porcentagem vira `auto`, e a imagem assumiria a altura intrínseca,
+  esticando a seção. Fora do fluxo, a altura vem da própria seção.
+- **Entrada da capa**: feita com `animation`, não com `transition` disparada por
+  classe, para o conteúdo aparecer sozinho mesmo se o JS falhar. O resto da
+  página entra por `IntersectionObserver`, com atraso escalonado por grupo de
+  irmãos.
+- **Lacre giratório**: texto em `textPath` sobre um círculo, girando devagar. É
+  o mesmo recurso da referência e não precisa de script.
 - **Acessibilidade**: link para pular ao conteúdo, foco visível, menu com foco
   preso enquanto aberto e fechamento no `Esc`, e `prefers-reduced-motion`
   desligando as animações.

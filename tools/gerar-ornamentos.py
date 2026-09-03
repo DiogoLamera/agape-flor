@@ -3,14 +3,8 @@
 
     python tools/gerar-ornamentos.py
 
-Produz três arquivos em assets/img/:
-
-- folhagem.svg        divisória entre seções, com folhas arredondadas e
-                      margaridinhas. Usada como mask-image, então é pintada
-                      pelo background-color e serve para qualquer cor de seção.
-- padrao.svg          padrão sem emenda, de folhas em contorno, para dar
-                      textura aos blocos escuros.
-- ramo.svg            ramo solto, usado como enfeite no hero e no catálogo.
+Produz assets/img/ramo.svg: um ramo solto, usado como máscara para o enfeite
+da faixa rosé. Como é máscara, a cor vem do CSS.
 
 Sem dependências: só a biblioteca padrão.
 """
@@ -43,73 +37,6 @@ def margarida(cx, cy, raio, petalas=6, giro=0.0):
     return ''.join(p)
 
 
-def gerar_folhagem():
-    """Divisória: faixa cheia embaixo e folhagem subindo, para encaixar entre
-    duas seções de cores diferentes."""
-    random.seed(12)
-    W, H = 420, 88
-    faixa = 70   # faixa baixa: as folhas precisam sobrar acima dela
-    partes = ['<rect y="%d" width="%d" height="%d"/>' % (faixa, W, H - faixa)]
-
-    def fileira(x0, passo, comp_rng, giro_max, prop, base):
-        x = x0
-        while x < W + 24:
-            comp = random.uniform(*comp_rng)
-            giro = random.uniform(-giro_max, giro_max)
-            # o pé da folha afunda na faixa; o resto sobra para fora
-            cy = base - math.cos(math.radians(giro)) * comp * 0.5
-            partes.append(folha_redonda(x + random.uniform(-4, 4), cy,
-                                        comp, comp * prop, giro))
-            x += random.uniform(*passo)
-
-    # O vão entre as folhas precisa ser maior que a largura delas, senão a
-    # silhueta funde num paredão. Daí folhas estreitas e passo largo.
-    fileira(8, (34, 46), (14, 21), 72, .52, faixa + 5)
-    fileira(26, (58, 78), (24, 34), 44, .44, faixa + 3)
-    fileira(60, (96, 130), (38, 52), 20, .36, faixa + 1)
-
-    # caules com margarida na ponta, mais altos que a folhagem
-    x = 40.0
-    while x < W:
-        alt = random.uniform(50, 70)
-        topo = faixa - alt
-        partes.append('<rect x="%.1f" y="%.1f" width="1.8" height="%.1f" rx=".9"/>'
-                      % (x, topo, alt))
-        partes.append(margarida(x + .9, topo - 2, random.uniform(6.5, 9),
-                                petalas=5, giro=random.uniform(0, 72)))
-        x += random.uniform(86, 122)
-
-    svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d" '
-           'width="%d" height="%d">\n  <g fill="#000">\n    %s\n  </g>\n</svg>\n'
-           % (W, H, W, H, '\n    '.join(partes)))
-    caminho = os.path.join(SAIDA, 'folhagem.svg')
-    open(caminho, 'w', encoding='utf-8').write(svg)
-    print('folhagem.svg  %5d bytes  %d formas' % (os.path.getsize(caminho), len(partes)))
-
-
-def gerar_padrao():
-    """Padrão sem emenda: as folhas que cruzam a borda direita são repetidas na
-    esquerda (e o mesmo em cima e embaixo), então o ladrilho fecha."""
-    random.seed(19)
-    T = 240
-    partes = []
-    for _ in range(9):
-        cx, cy = random.uniform(0, T), random.uniform(0, T)
-        comp = random.uniform(15, 26)
-        giro = random.uniform(0, 360)
-        for dx in (-T, 0, T):
-            for dy in (-T, 0, T):
-                partes.append(folha_redonda(cx + dx, cy + dy, comp, comp * .55, giro))
-
-    svg = ('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 %d %d" '
-           'width="%d" height="%d">\n'
-           '  <g fill="none" stroke="#000" stroke-width="1.5">\n    %s\n  </g>\n</svg>\n'
-           % (T, T, T, T, '\n    '.join(partes)))
-    caminho = os.path.join(SAIDA, 'padrao.svg')
-    open(caminho, 'w', encoding='utf-8').write(svg)
-    print('padrao.svg    %5d bytes' % os.path.getsize(caminho))
-
-
 def gerar_ramo():
     """Ramo solto para enfeitar cantos, com folhas alternadas no caule."""
     W, H = 200, 320
@@ -134,6 +61,4 @@ def gerar_ramo():
 
 
 if __name__ == '__main__':
-    gerar_folhagem()
-    gerar_padrao()
     gerar_ramo()

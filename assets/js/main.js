@@ -6,48 +6,12 @@
   'use strict';
 
   /* ---------------------------------------------------------
-     CONFIGURAÇÃO — ajuste estes dois blocos e o site está seu
+     CONFIGURAÇÃO
      --------------------------------------------------------- */
 
   // Celular do perfil da loja no Google, no formato 55 + DDD + número.
   // O Facebook da loja divulga esse mesmo número como WhatsApp.
   var WHATSAPP = '5531983031214';
-
-  // TODO: PREÇOS E DESCRIÇÕES SÃO FICTÍCIOS — substituir pelos itens reais.
-  // As fotos são do Pexels e do Unsplash; troque por fotos da loja em assets/img/.
-  var ITENS = [
-    {
-      nome: 'Buquê de Girassóis', preco: 'R$ 159', marca: 'mais pedido',
-      desc: 'Girassóis com rosas e folhagem, embalado em papel kraft.',
-      foto: 'px:12272311'
-    },
-    {
-      nome: 'Peônias na Seda', preco: 'R$ 229', marca: '',
-      desc: 'Peônias em embalagem clara, para pedir desculpas ou dizer sim.',
-      foto: 'px:3392982'
-    },
-    {
-      nome: 'Buquê Esmeralda', preco: 'R$ 199', marca: 'assinatura',
-      desc: 'Flores da estação em papel verde escuro, com laço de cetim.',
-      foto: 'px:34990301'
-    },
-    {
-      nome: 'Mudas Ornamentais', preco: 'R$ 35', marca: '',
-      desc: 'Mudas prontas para o vaso ou para o canteiro, várias espécies.',
-      foto: 'px:22610800'
-    },
-    {
-      nome: 'Rosas do Dia', preco: 'R$ 119', marca: '',
-      desc: 'Rosas colhidas na semana, montadas do tamanho que você quiser.',
-      // pos: enquadramento opcional, para o corte 4:3 não cair no vazio da foto
-      foto: 'un:photo-1691600351187-c42ae2510997', pos: '22% 82%'
-    },
-    {
-      nome: 'Cesta de Flores Secas', preco: 'R$ 149', marca: 'dura meses',
-      desc: 'Composição em tons secos, para quem quer um presente duradouro.',
-      foto: 'un:photo-1543157145-f78c636d023d'
-    }
-  ];
 
   /* --------------------------------------------------------- */
 
@@ -56,17 +20,6 @@
   var $$ = function (s, ctx) {
     return Array.prototype.slice.call((ctx || document).querySelectorAll(s));
   };
-
-  /* As fotos vêm de dois bancos: o prefixo diz de qual montar a URL. */
-  function urlFoto(id, largura) {
-    if (id.indexOf('px:') === 0) {
-      var n = id.slice(3);
-      return 'https://images.pexels.com/photos/' + n + '/pexels-photo-' + n +
-             '.jpeg?auto=compress&cs=tinysrgb&w=' + largura;
-    }
-    return 'https://images.unsplash.com/' + id.slice(3) +
-           '?auto=format&fit=crop&q=72&w=' + largura;
-  }
 
   /* === Links de WhatsApp ===
      Cada elemento com data-wa vira um link com a mensagem já escrita. */
@@ -78,25 +31,6 @@
       el.rel = 'noopener';
     });
   }
-
-  /* === Cabeçalho ganha borda depois do topo === */
-  (function cabecalho() {
-    var topo = $('#topo');
-    if (!topo) return;
-    var pendente = false;
-
-    function ao() {
-      topo.classList.toggle('fixado', (window.scrollY || window.pageYOffset) > 24);
-      pendente = false;
-    }
-    window.addEventListener('scroll', function () {
-      if (!pendente) {
-        pendente = true;
-        window.requestAnimationFrame(ao);
-      }
-    }, { passive: true });
-    ao();
-  })();
 
   /* === Menu em tela estreita === */
   (function menu() {
@@ -152,42 +86,6 @@
     window.matchMedia('(min-width: 901px)').addEventListener('change', function (e) {
       if (e.matches) fechar();
     });
-  })();
-
-  /* === Catálogo em grade === */
-  (function catalogo() {
-    var grade = $('#grade');
-    if (!grade) return;
-
-    ITENS.forEach(function (item) {
-      var li = document.createElement('li');
-      li.className = 'item';
-      li.innerHTML =
-        '<div class="item__foto">' +
-          '<img src="' + urlFoto(item.foto, 640) + '" ' +
-               'srcset="' + urlFoto(item.foto, 420) + ' 420w, ' +
-                            urlFoto(item.foto, 640) + ' 640w, ' +
-                            urlFoto(item.foto, 900) + ' 900w" ' +
-               'sizes="(max-width:640px) 92vw, (max-width:1100px) 46vw, 30vw" ' +
-               'width="640" height="480" loading="lazy" decoding="async" ' +
-               (item.pos ? 'style="object-position:' + item.pos + '" ' : '') +
-               'alt="' + item.nome + '">' +
-          (item.marca ? '<span class="item__marca">' + item.marca + '</span>' : '') +
-        '</div>' +
-        '<div class="item__corpo">' +
-          '<div class="item__topo">' +
-            '<h3 class="item__nome">' + item.nome + '</h3>' +
-            '<span class="item__preco">' + item.preco + '</span>' +
-          '</div>' +
-          '<p class="item__desc">' + item.desc + '</p>' +
-          '<a class="item__pedir" href="#" data-wa="Olá! Tenho interesse em: ' +
-            item.nome + ' (' + item.preco + ').">Pedir pelo zap</a>' +
-        '</div>';
-      li.setAttribute('data-revela', '');
-      grade.appendChild(li);
-    });
-
-    aplicarZap(grade);
   })();
 
   /* === Entrada ao chegar na tela === */
