@@ -98,8 +98,19 @@ trata esse caso.
   conta do centro refeita quando a fonte carrega e quando a janela muda.
 - **Troca de foto da vitrine**: a imagem nova é carregada em memória antes de
   entrar, para a troca não piscar.
-- **Entrada da capa**: feita com `animation`, não com `transition` disparada por
-  classe, para o conteúdo aparecer sozinho mesmo se o JS falhar.
+- **Animação da capa**: a palavra sobe por trás de uma máscara (`overflow:hidden`
+  no `h1`, `translateY` no `span` de dentro), a foto abre de baixo para cima com
+  `clip-path`, e a etiqueta lateral e a pista de rolagem entram depois. Tudo com
+  `animation`, e não com `transition` disparada por classe, para o conteúdo
+  aparecer sozinho mesmo se o JS falhar. A foto ainda tem um zoom lento contínuo.
+- **Parallax da capa**: no scroll, a foto anda mais devagar que a página e o
+  título anda um pouco contra, então as duas camadas se aproximam em vez de
+  subirem como um bloco só. Um `requestAnimationFrame` por quadro, desligado em
+  `prefers-reduced-motion`. O zoom fica na `<img>` e o parallax no wrapper, para
+  os dois não disputarem o mesmo `transform`.
+- **Etiqueta lateral**: usa `writing-mode:vertical-rl`, e não `rotate`. O texto
+  girado por `transform` saía da caixa e era cortado pelo `overflow:hidden` da
+  capa.
 - **Acessibilidade**: link para pular ao conteúdo, foco visível, menu com foco
   preso enquanto aberto e fechamento no `Esc`, setas do teclado na fita, aviso em
   `aria-live` a cada troca de buquê, e `prefers-reduced-motion` desligando as

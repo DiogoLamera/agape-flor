@@ -215,9 +215,40 @@
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(centralizar);
   })();
 
+  /* === Parallax da capa ===
+     A foto anda mais devagar que a página e o título anda um pouco contra:
+     as duas camadas se aproximam durante a rolagem, em vez de subirem juntas
+     como um bloco só. Um rAF por quadro, e nada disso roda em
+     prefers-reduced-motion. */
+  (function parallaxCapa() {
+    var capa = $('.capa');
+    var foto = $('.capa__foto');
+    var marca = $('.capa__marca');
+    if (!capa || !foto || !marca || reduzido) return;
+
+    var pendente = false;
+
+    function ao() {
+      var y = window.scrollY || window.pageYOffset;
+      if (y < window.innerHeight * 1.3) {
+        foto.style.transform = 'translate3d(0,' + (y * 0.14).toFixed(1) + 'px,0)';
+        marca.style.transform = 'translate3d(0,' + (y * -0.07).toFixed(1) + 'px,0)';
+      }
+      pendente = false;
+    }
+
+    window.addEventListener('scroll', function () {
+      if (!pendente) {
+        pendente = true;
+        window.requestAnimationFrame(ao);
+      }
+    }, { passive: true });
+    ao();
+  })();
+
   /* === Entrada ao chegar na tela === */
   (function revela() {
-    var alvos = $$('[data-revela]');
+    var alvos = $$('[data-revela],[data-sobe]');
     if (!('IntersectionObserver' in window) || reduzido) {
       alvos.forEach(function (el) { el.classList.add('visivel'); });
       return;

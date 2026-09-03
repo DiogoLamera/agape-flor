@@ -94,7 +94,9 @@
 
   <!-- ============ CAPA ============ -->
   <section class="capa" id="inicio">
-    <h1 class="capa__marca">Ágape</h1>
+    <span class="capa__lado" aria-hidden="true">Floricultura em Betim &middot; desde sempre no bairro</span>
+
+    <h1 class="capa__marca"><span>Ágape</span></h1>
 
     <figure class="capa__foto">
       <img src="https://images.pexels.com/photos/7693943/pexels-photo-7693943.jpeg?auto=compress&cs=tinysrgb&w=1600"
@@ -108,12 +110,17 @@
         hora, entregues no mesmo dia.
       </figcaption>
     </figure>
+
+    <a class="capa__desce" href="#buques" aria-label="Ver os buquês">
+      <span class="capa__desce-traco" aria-hidden="true"></span>
+      <span class="capa__desce-txt">Ver os buquês</span>
+    </a>
   </section>
 
   <!-- ============ BUQUÊS ============ -->
   <section class="buques" id="buques">
     <header class="buques__cabeca">
-      <h2>Presente que floresce</h2>
+      <h2 data-sobe><span><span>Presente que floresce</span></span></h2>
       <p class="etiqueta">Betim · Santa Cruz</p>
     </header>
 
@@ -148,46 +155,52 @@
 
   <!-- ============ ALMA ============ -->
   <section class="alma" id="alma">
-    <div class="alma__topo">
-      <h2 class="alma__titulo">Amor<br>em flor</h2>
+    <div class="alma__grade">
+      <div class="alma__esq">
+        <h2 class="alma__titulo" data-sobe>
+          <span><span>Amor</span></span>
+          <span><span>em flor</span></span>
+        </h2>
 
-      <div class="alma__texto">
-        <p>
-          Ágape é o nome que se dá ao amor que não cobra nada em troca. É com
-          essa ideia que a gente monta cada buquê: você conta a ocasião, o gosto
-          de quem vai receber e quanto quer gastar, e a flor faz o resto.
-        </p>
-        <p>
-          Somos floricultura de bairro na Santa Cruz, em Betim. Abrimos todos os
-          dias, inclusive domingo de manhã, e entregamos no mesmo dia.
-        </p>
-        <a class="link-linha" href="#" data-wa="Olá! Gostaria de fazer um pedido.">Fazer meu pedido</a>
+        <figure class="alma__foto" data-revela>
+          <img src="https://images.pexels.com/photos/5410146/pexels-photo-5410146.jpeg?auto=compress&cs=tinysrgb&w=1100"
+               sizes="(max-width:900px) 100vw, 56vw"
+               width="1100" height="734" loading="lazy" decoding="async"
+               alt="Cliente saindo da floricultura com um buquê embalado em papel">
+        </figure>
       </div>
-    </div>
 
-    <div class="alma__base">
-      <figure class="alma__foto">
-        <img src="https://images.pexels.com/photos/5410146/pexels-photo-5410146.jpeg?auto=compress&cs=tinysrgb&w=1100"
-             sizes="(max-width:900px) 100vw, 58vw"
-             width="1100" height="734" loading="lazy" decoding="async"
-             alt="Cliente saindo da floricultura com um buquê embalado em papel">
-      </figure>
+      <!-- a coluna da direita distribui texto e fatos de ponta a ponta, para
+           não sobrar aquele vão de malva no meio -->
+      <div class="alma__dir">
+        <div class="alma__texto" data-revela>
+          <p>
+            Ágape é o nome que se dá ao amor que não cobra nada em troca. É com
+            essa ideia que a gente monta cada buquê: você conta a ocasião, o
+            gosto de quem vai receber e quanto quer gastar, e a flor faz o resto.
+          </p>
+          <p>
+            Somos floricultura de bairro na Santa Cruz, em Betim. Abrimos todos
+            os dias, inclusive domingo de manhã, e entregamos no mesmo dia.
+          </p>
+          <a class="link-linha" href="#" data-wa="Olá! Gostaria de fazer um pedido.">Fazer meu pedido</a>
+        </div>
 
-      <!-- a coluna de fatos ocupa o vazio ao lado da foto e ainda informa -->
-      <ul class="fatos">
-        <li>
-          <span class="fatos__num">7</span>
-          <span class="fatos__txt">dias por semana, inclusive domingo de manhã</span>
-        </li>
-        <li>
-          <span class="fatos__num">Hoje</span>
-          <span class="fatos__txt">entrega em Betim no mesmo dia do pedido</span>
-        </li>
-        <li>
-          <span class="fatos__num">4,9</span>
-          <span class="fatos__txt">de nota, com 84 avaliações no Google</span>
-        </li>
-      </ul>
+        <ul class="fatos" data-revela>
+          <li>
+            <span class="fatos__num">7</span>
+            <span class="fatos__txt">dias por semana, inclusive domingo de manhã</span>
+          </li>
+          <li>
+            <span class="fatos__num">Hoje</span>
+            <span class="fatos__txt">entrega em Betim no mesmo dia do pedido</span>
+          </li>
+          <li>
+            <span class="fatos__num">4,9</span>
+            <span class="fatos__txt">de nota, com 84 avaliações no Google</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <span class="alma__flor" aria-hidden="true"><svg class="marca__flor" viewBox="0 0 40 40" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.7"><ellipse cx="20" cy="11.4" rx="4.3" ry="6.9"/><ellipse cx="20" cy="11.4" rx="4.3" ry="6.9" transform="rotate(72 20 18)"/><ellipse cx="20" cy="11.4" rx="4.3" ry="6.9" transform="rotate(144 20 18)"/><ellipse cx="20" cy="11.4" rx="4.3" ry="6.9" transform="rotate(216 20 18)"/><ellipse cx="20" cy="11.4" rx="4.3" ry="6.9" transform="rotate(288 20 18)"/></g><circle cx="20" cy="18" r="2.5" fill="currentColor"/><path d="M20 24v13" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M20 32c-4-.8-6.4-3-7.4-6.6 3.7-.8 6.2.7 7.4 4" fill="currentColor"/></svg></span>
