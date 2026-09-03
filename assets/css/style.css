@@ -91,16 +91,35 @@ address{font-style:normal}
 .estrelas{display:inline-flex;flex:0 0 auto;gap:1px;color:var(--tinta)}
 .estrelas svg{fill:currentColor}
 
-/* === BARRA === */
+/* === BARRA ===
+   Fica por cima da capa, e não empurrando ela para baixo: assim a capa pode
+   valer 100svh redondos e nada é cortado ao entrar no site. */
 .barra{
-  position:relative;z-index:30;
+  position:absolute;inset:0 0 auto;z-index:30;
   display:flex;align-items:center;gap:1.5rem;
   padding:clamp(.9rem,2vw,1.3rem) var(--folga);
-  background:var(--malva);
 }
-.sigla{
-  font-size:.86rem;font-weight:800;letter-spacing:-.02em;
+
+/* marca: flor desenhada + nome, no lugar das iniciais soltas */
+.marca{
+  display:inline-flex;align-items:center;gap:.6rem;
   color:var(--papel);
+}
+.marca__flor{
+  width:clamp(26px,2.4vw,32px);
+  flex:0 0 auto;
+  transition:transform .6s var(--suave);
+}
+.marca:hover .marca__flor{transform:rotate(28deg)}
+.marca__texto{display:flex;flex-direction:column;line-height:1}
+.marca__texto b{
+  font-size:clamp(.95rem,1.4vw,1.15rem);
+  font-weight:800;letter-spacing:-.03em;
+}
+.marca__texto small{
+  margin-top:.18rem;
+  font-size:.54rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;
+  opacity:.72;
 }
 .nav{display:flex;gap:clamp(1.2rem,3vw,2.6rem);margin-inline:auto}
 .nav a{
@@ -138,7 +157,11 @@ address{font-style:normal}
    laterais — é o recorte da referência. */
 .capa{
   position:relative;
+  display:flex;flex-direction:column;
+  min-height:100svh;
   background:var(--malva);
+  /* espaço para a barra, que flutua por cima */
+  padding-top:clamp(3.6rem,6vw,5rem);
   padding-bottom:clamp(1rem,3vw,2.5rem);
   overflow:hidden;
 }
@@ -146,9 +169,10 @@ address{font-style:normal}
   position:relative;z-index:2;
   margin:0 auto;
   width:min(100% - 2 * var(--folga),var(--largura));
-  /* corpo puxado no vw para a palavra chegar perto das bordas, como na
-     referência; o -.06em fecha o espaçamento como fonte de display */
-  font-size:clamp(4rem,29vw,26rem);
+  /* Corpo puxado no vw para a palavra chegar perto das bordas, como na
+     referência. O min() com vh segura o título em janela baixa: sem ele a
+     capa não cabia na primeira tela em telas de pouca altura. */
+  font-size:clamp(4rem,min(30vw,52vh),26rem);
   letter-spacing:-.06em;
   line-height:.8;
   color:var(--papel);
@@ -157,25 +181,43 @@ address{font-style:normal}
      overflow:hidden — sem esta folga o acento é cortado fora */
   padding-top:.14em;
   /* a foto encosta na metade de baixo das letras */
-  margin-bottom:clamp(-3.5rem,-4vw,-1.5rem);
+  margin-bottom:clamp(-4.5rem,-5vw,-1.5rem);
+  flex:0 0 auto;
 }
+/* A foto toma a altura que sobra depois do título, em vez de ter proporção
+   fixa: é isso que garante a capa inteira dentro da primeira tela, em qualquer
+   altura de janela. */
 .capa__foto{
   position:relative;z-index:1;
+  /* base 0: a altura vem só do espaço que sobra depois do título, e não do
+     conteúdo — é isso que mantém a capa inteira dentro da primeira tela */
+  flex:1 1 0;
+  min-height:min(38vh,400px);
   margin:0 auto;
   width:min(100% - 2 * var(--folga) * 2,calc(var(--largura) - 4rem));
 }
+/* a imagem sai do fluxo: com height:100% dentro de um pai de altura automática
+   a porcentagem vira auto, e ela assumia a altura intrínseca (1800px+) */
 .capa__foto img{
-  width:100%;
-  aspect-ratio:16 / 9;
+  position:absolute;inset:0;
+  width:100%;height:100%;
   object-fit:cover;
-  object-position:center 42%;
+  object-position:center 45%;
+}
+/* degradê no pé da foto, para a legenda ler sobre qualquer pétala */
+.capa__foto::after{
+  content:"";
+  position:absolute;inset:auto 0 0;
+  height:42%;
+  background:linear-gradient(to top,rgba(58,34,37,.6),transparent);
+  pointer-events:none;
 }
 .capa__nota{
-  position:absolute;right:clamp(1rem,3vw,2.5rem);bottom:clamp(1rem,3vw,2.2rem);
+  position:absolute;z-index:2;
+  right:clamp(1rem,3vw,2.5rem);bottom:clamp(1rem,3vw,2.2rem);
   max-width:32ch;
   font-size:.82rem;
   color:var(--papel);
-  text-shadow:0 1px 12px rgba(40,25,27,.5);
 }
 
 /* === BUQUÊS === */
@@ -302,8 +344,12 @@ address{font-style:normal}
 }
 .alma__texto{padding-top:clamp(.5rem,2vw,1.5rem)}
 .alma__texto p{
-  max-width:38ch;
-  color:rgba(255,255,255,.86);
+  max-width:34ch;
+  /* o corpo sobe junto com o título: com texto miúdo ao lado de um display
+     enorme a seção ficava desequilibrada */
+  font-size:clamp(1rem,1.15vw,1.18rem);
+  line-height:1.55;
+  color:rgba(255,255,255,.9);
   margin-left:auto;
 }
 .alma__texto .link-linha{
@@ -313,20 +359,52 @@ address{font-style:normal}
   color:var(--papel);
 }
 
-.alma__foto{
-  margin:0;
-  width:min(100% - 2 * var(--folga),calc(var(--largura) * .62));
-  margin-left:var(--folga);
+/* base da seção: foto à esquerda e a coluna de fatos à direita, no lugar do
+   vazio que sobrava embaixo do parágrafo */
+.alma__base{
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);
+  gap:clamp(1.5rem,4vw,3.5rem);
+  align-items:end;
+  padding-left:var(--folga);
+  padding-right:var(--folga);
 }
+.alma__foto{margin:0}
 .alma__foto img{
   width:100%;
   aspect-ratio:3 / 2;
   object-fit:cover;
 }
-.alma__sigla{
-  position:absolute;right:var(--folga);bottom:clamp(1rem,2.5vw,2rem);
-  font-size:.86rem;font-weight:800;
+
+.fatos{
+  display:flex;flex-direction:column;
+  gap:clamp(1rem,2.2vw,1.8rem);
+  padding-bottom:clamp(1.5rem,3vw,2.6rem);
   color:var(--papel);
+}
+.fatos li{
+  display:flex;align-items:baseline;gap:.9rem;
+  padding-top:clamp(.8rem,1.6vw,1.2rem);
+  border-top:1px solid var(--regua-clara);
+}
+.fatos__num{
+  flex:0 0 auto;
+  min-width:2.6em;
+  font-size:clamp(1.5rem,2.6vw,2.3rem);
+  font-weight:800;letter-spacing:-.04em;line-height:1;
+}
+.fatos__txt{
+  font-size:.88rem;
+  line-height:1.45;
+  color:rgba(255,255,255,.82);
+}
+
+.alma__flor{
+  position:absolute;right:var(--folga);bottom:clamp(1rem,2.5vw,2rem);
+  display:block;
+  width:clamp(26px,2.4vw,32px);
+  color:var(--papel);
+  opacity:.7;
 }
 
 /* === CONTATO === */
@@ -401,6 +479,8 @@ address{font-style:normal}
 }
 .rodape p{margin:0}
 .rodape a{padding-bottom:2px;border-bottom:1px solid var(--regua-clara)}
+.marca--rodape{color:var(--papel)}
+.marca--rodape .marca__flor{width:26px}
 
 /* === ANIMAÇÕES ===
    Entrada por animation, e não por transition disparada por classe: assim o
@@ -446,14 +526,13 @@ address{font-style:normal}
   .nav a{font-size:1.05rem}
   .barra__cta{margin-left:auto}
 
-  .capa__foto img{aspect-ratio:4 / 3}
+  .capa__foto{min-height:min(38vh,320px)}
+  /* a legenda continua absoluta: a imagem está fora do fluxo, então uma
+     legenda estática subiria para o topo da figura, por cima da foto */
   .capa__nota{
-    position:static;
+    left:clamp(1rem,4vw,2rem);
+    right:clamp(1rem,4vw,2rem);
     max-width:none;
-    margin-top:.9rem;
-    padding-inline:var(--folga);
-    color:var(--papel);
-    text-shadow:none;
   }
 
   .vitrine{grid-template-columns:1fr}
@@ -463,7 +542,8 @@ address{font-style:normal}
 
   .alma__topo{grid-template-columns:1fr;gap:1.5rem}
   .alma__texto p,.alma__texto .link-linha{margin-left:0}
-  .alma__foto{width:calc(100% - 2 * var(--folga))}
+  .alma__base{grid-template-columns:1fr;gap:2rem}
+  .fatos{padding-bottom:clamp(2rem,5vw,3rem)}
 
   .contato__grade{grid-template-columns:1fr;gap:2.2rem}
 }

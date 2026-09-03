@@ -78,10 +78,20 @@ trata esse caso.
 
 ## Detalhes de implementação
 
+- **Capa dentro da primeira tela**: a barra flutua por cima da capa em vez de
+  empurrá-la, a capa vale `100svh` e a foto usa `flex:1 1 0`, então ela fica com
+  exatamente a altura que sobra depois do título. A imagem é posicionada em
+  absoluto: com `height:100%` dentro de um pai de altura automática a
+  porcentagem vira `auto`, e ela assumia a altura intrínseca — 1800px, quatro
+  vezes o espaço disponível.
 - **Tipografia como imagem**: a marca na capa ocupa quase a largura inteira
-  (`font-size` em `vw`, `letter-spacing` negativo). Como o `line-height` é menor
-  que 1 e a seção tem `overflow:hidden`, o acento do "Á" era cortado — daí o
-  `padding-top` em `em` no título.
+  (`font-size` em `vw`, `letter-spacing` negativo). O `min()` com `vh` segura o
+  corpo em janela baixa, senão a capa não cabe na primeira tela. Como o
+  `line-height` é menor que 1 e a seção tem `overflow:hidden`, o acento do "Á"
+  era cortado — daí o `padding-top` em `em` no título.
+- **Marca**: flor de cinco pétalas desenhada em SVG inline, junto do nome. Fica
+  inline no HTML de propósito, para herdar o `currentColor` da barra e do rodapé.
+  O favicon repete o mesmo desenho.
 - **Fita de nomes**: a lista dos buquês é montada três vezes seguidas, e o item
   ativo é sempre o da cópia do meio. Assim há sempre nome à esquerda e à direita,
   e a fita parece não ter começo nem fim. O trilho desliza por `transform`, com a
